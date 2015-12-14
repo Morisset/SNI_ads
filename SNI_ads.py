@@ -34,59 +34,80 @@ def auts(p):
         auts = ', '.join([pretty_author_name(a) for a in p.author])
     return auts
    
-class SNI(object):
+def pretty_ref(p):
+    if cv(p.year) is not None:
+        year = ', {}'.format(cv(p.year))
+    else:
+        year = ''
+    if cv(p.pub) is not None:
+        pub = ', {}'.format(cv(p.pub))
+    else:
+        pub = ''
+    if cv(p.volume) is not None:
+        volume = ', {}'.format(cv(p.volume))
+    else:
+        volume = ''
+    try:
+        page = ', {}'.format(cv(p.page[0]))
+    except:
+        page = ''
+        
+    return('{}{}{}{}{}'.format(auts(p), year, pub, volume, page))
+           
+def get_papers(author):
     
-    def __init__(self, author):
+    res = ads.SearchQuery(author=author)
+    try:
+        papers = list(res)
+        print('Got {} papers for {}'.format(len(papers), author))
+    except:
+        print('No papers')
+    return papers
 
-        self.author = author
-        self.papers = None
-        self.citations = {}
-        
-    def get_papers(self):
-        
-        res = ads.SearchQuery(author=self.author)
-        try:
-            self.papers = list(res)
-            print('Got {} papers for {}'.format(len(self.papers), self.author))
-        except:
-            print('No papers')
-
-    def get_citations(self):
-        
-        if self.papers is not None:
-            for p in self.papers:
-                N_citations = p.citation_count
-                if N_citations > 0:
-                    self.citations[p.bibcode] = []
-                    for citation in p.citation:
-                        self.citations[p.bibcode].append(ads.SearchQuery(bibcode=citation).next())
-                    print('Got {} citations for paper {}.'.format(N_citations, p.bibcode))
+def get_citations(papers):
     
-def print_results(SNI, filename=None):
+    citations = {}
+    if papers is not None:
+        for p in papers:
+            N_citations = p.citation_count
+            if N_citations > 0:
+                citations[p.bibcode] = []
+                for citation in p.citation:
+                    citations[p.bibcode].append(ads.SearchQuery(bibcode=citation).next())
+                print('Got {} citations for paper {}.'.format(N_citations, p.bibcode))
+    return citations
+
+def print_results(author, papers, citations, filename=None):
     
     if filename is None:
         def myprint(str):
             print(str)
+    elif type(filename) is file:
+        f = filename
+        def myprint(str):        
+            f.write(str + '\n')
     else:
         f = open(filename)
         def myprint(str):        
             f.write(str + '\n')
-
     
-    for p in sorted(SNI.papers , key=lambda pp: pp.year):
+    myprint('\\documentclass{letter}')
+    myprint('\\begin{document}')
+    
+    for p in sorted(papers , key=lambda pp: pp.year):
         typeA = [] # no autocitas
         typeB = [] # autocitas por coauthor
         typeC = [] # autocita
         N_citations = p.citation_count
         authors = [pretty_author_name(a) for a in p.author]
         if N_citations > 0:
-            for citing in SNI.citations[p.bibcode]:
+            for citing in citations[p.bibcode]:
                 autocite = False
                 autociteco = False
-                for author in citing.author:
-                    if pretty_author_name(author) == pretty_author_name(SNI.author):
+                for this_author in citing.author:
+                    if pretty_author_name(this_author) == pretty_author_name(author):
                         autocite = True
-                    elif pretty_author_name(author) in authors:
+                    elif pretty_author_name(this_author) in authors:
                         autociteco = True
                 if autocite:
                     typeC.append(citing)
@@ -94,32 +115,31 @@ def print_results(SNI, filename=None):
                     typeB.append(citing)
                 else:
                     typeA.append(citing)
-            myprint('{} {}, {}, {}, {}: Total = {}, Type A = {}, type B = {}, type C = {}'.format(auts(p), cv(p.year), cv(p.pub), cv(p.volume), cv(p.page[0]), 
-                                                                                                p.citation_count,
-                                                                                len(typeA), len(typeB), len(typeC)))
+            myprint('{} \\\ Total = {}, Type A = {}, type B = {}, type C = {}'.format(pretty_ref(p), p.citation_count,
+                                                                                      len(typeA), len(typeB), len(typeC)))
             if len(typeA) > 0:
                 myprint('{\\bf Citations Type A:}')
                 myprint('\\begin{itemize}')
                 for pc in typeA:
-                    myprint('\item {} {}, {}, {}, {}'.format(auts(pc), cv(pc.year), cv(pc.pub), cv(pc.volume), cv(pc.page[0])))
+                    myprint('\item {}'.format(pretty_ref(pc)))
                 myprint('\end{itemize}')
             if len(typeB) > 0:
                 myprint('{\\bf Citations Type B:}')
                 myprint('\\begin{itemize}')
                 for pc in typeB:
-                    myprint('\item {} {}, {}, {}, {}'.format(auts(pc), cv(pc.year), cv(pc.pub), cv(pc.volume), cv(pc.page[0])))
+                    myprint('\item {}'.format(pretty_ref(pc)))
                 myprint('\end{itemize}')
             myprint('\\hline')
             myprint('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%')
-                
-    if filename is not None:
-        f.close()       
+    myprint('\end{document}')
+    if filename is not None and type(filename) is not file:
+        f.close()
 
 
 
-"""                    
-S = SNI('Morisset, C.')
-S.get_papers()
-S.get_citations()
-S.print_results()
+"""
+author = 'Morisset, C.'             
+articulos = get_papers(author)
+citas = get_citations(articulos)
+print_results(author, articulos, citas)
 """
