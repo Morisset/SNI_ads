@@ -1,5 +1,6 @@
 Aun estoy trabajando en el programa, lo pueden usar para ver un poco como sale, pero tengo que resolver el problema de los acentos (convencer el programa que cuando Garcia cita García, es autocita...).
 Cambiare este mensaje cuando estos problemas estan arreglados, vigilar esta pagina...
+UPDATE: ya encontre una maneja de resolver el problema de los acentos y del acceso (se hacen mucho menos peticiones hacia ADS). La liga al program es el mismo, verifiquen que es la version 2.0
 
 Este programa esta hecho para generar el documento que CONACyT pide para los investigadores que renovan o entran en el SNI. En particular lo siguiente:
 
@@ -22,6 +23,10 @@ Supongo que tienen una distribución de python en buen estado, con el programa d
 pip install ads
 
 Et voilà!
+
+Puede ser que necesiten tambien unidecode:
+
+pip install unidecode
 
 Ya pueden descargar el programa que hice desde aca: https://github.com/Morisset/SNI_ads/raw/master/SNI_ads.py
 

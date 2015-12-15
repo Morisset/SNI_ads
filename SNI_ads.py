@@ -3,11 +3,14 @@
 Created on 14 dec. 2015
 
 @author: christophemorisset
+
+VERSION 2.0
 '''
 
 
 import ads
 import requests.packages.urllib3
+from unidecode import unidecode as uni
 
 requests.packages.urllib3.disable_warnings()
 
@@ -106,9 +109,9 @@ def print_results(author, papers, citations, filename=None):
                 autocite = False
                 autociteco = False
                 for this_author in citing.author:
-                    if pretty_author_name(this_author) == pretty_author_name(author):
+                    if uni(pretty_author_name(this_author)) == uni(pretty_author_name(author)):
                         autocite = True
-                    elif pretty_author_name(this_author) in authors:
+                    elif uni(pretty_author_name(this_author)) in [uni(a) for a in authors]:
                         autociteco = True
                 if autocite:
                     typeC.append(citing)
