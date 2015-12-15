@@ -16,14 +16,7 @@ requests.packages.urllib3.disable_warnings()
 
 cv = lambda str: unicode(str).encode('utf8')
 cv = lambda str: uni(str).replace('$', '').replace('#', '').replace('&', '')
-
-"""
-def cv(str):
-    if type(str) is str:
-        return uni(str)
-    else:
-        return [cv(s) for s in str]
-"""    
+    
 
 def pretty_author_name(authors):
     aspl = authors.split(",")
