@@ -4,7 +4,7 @@ Created on 14 dec. 2015
 
 @author: christophemorisset
 
-VERSION 2.0
+VERSION 2.2
 '''
 
 
@@ -15,6 +15,14 @@ from unidecode import unidecode as uni
 requests.packages.urllib3.disable_warnings()
 
 cv = lambda str: unicode(str).encode('utf8')
+cv = lambda str: uni(str)
+
+def cv(str):
+    if type(str) is str:
+        return uni(str)
+    else:
+        return [cv(s) for s in str]
+    
 
 def pretty_author_name(authors):
     aspl = authors.split(",")
@@ -59,7 +67,7 @@ def pretty_ref(p):
            
 def get_papers(author):
     
-    res = ads.SearchQuery(author=author, fl='author,title,year,pub, volume, citation, citation_count, bibcode')
+    res = ads.SearchQuery(author=author, fl='author, title, year, pub, volume, page, citation, citation_count, bibcode')
     try:
         papers = list(res)
         print('Got {} papers for {}'.format(len(papers), author))
@@ -77,7 +85,7 @@ def get_citations(papers):
             if N_citations > 0:
                 citations[p.bibcode] = []
                 for citation in p.citation:
-                    citations[p.bibcode].append(ads.SearchQuery(bibcode=citation, fl='author,title,year,pub, volume').next())
+                    citations[p.bibcode].append(ads.SearchQuery(bibcode=citation, fl='author, title, year, pub, volume, page').next())
                 print('Got {} citations for paper {}.'.format(N_citations, p.bibcode))
     return citations
 
