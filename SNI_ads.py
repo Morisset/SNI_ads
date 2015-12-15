@@ -138,8 +138,11 @@ def print_results(author, papers, citations, filename=None):
 
 
 """
+ads.config.token = "5KAUJBW123456789dHCzvJWn73WyKVvNvyugC87M"
 author = 'Morisset, C.'             
 articulos = get_papers(author)
 citas = get_citations(articulos)
 print_results(author, articulos, citas)
+f = open('misrefs.tex', 'w')
+print_results(author, articulos, citas, f)
 """

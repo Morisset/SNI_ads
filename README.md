@@ -18,3 +18,12 @@ Supongo que tienen una distribución de python en buen estado, con el programa d
 
 pip install ads
 
+Et voilà!
+
+Ya pueden descargar el programa que hice desde aca: https://github.com/Morisset/SNI_ads/raw/master/SNI_ads.py
+
+Hay que guardarlo donde quieren y editarlo para cambiar un par de cosas al final: el nombre del autor y el token que han recuprado a la etapa anterior. Y quitar los """ para descomentar la parte que corre el codigo.
+
+Aun estoy trabajando con el programa, pero por lo menos ya lo vi trabajar.
+El problema es que despues de hacer varios intentos, el sistema ADS me ha bloqueado! Mandé un email para preguntarles de que sirve un acceso especial si no se puede recuperar unas centenas de referencias, les aviso cuando se mas...
+
