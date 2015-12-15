@@ -100,7 +100,7 @@ def print_results(author, papers, citations, filename=None):
     myprint('\\documentclass{letter}')
     myprint('\\begin{document}')
     myprint('\\begin{enumerate}')
-    for p in sorted(papers , key=lambda pp: pp.year):
+    for p in sorted(papers , key=lambda pp: (pp.year, pp.author[0])):
         typeA = [] # no autocitas
         typeB = [] # autocitas por coauthor
         typeC = [] # autocita
@@ -127,13 +127,13 @@ def print_results(author, papers, citations, filename=None):
                 if len(typeA) > 0:
                     myprint('{\\bf Citations Type A:}')
                     myprint('\\begin{itemize}')
-                    for pc in sorted(typeA , key=lambda pp: pp.year):
+                    for pc in sorted(typeA , key=lambda pp: (pp.year, pp.author[0])):
                         myprint('\item {}'.format(pretty_ref(pc)))
                     myprint('\end{itemize}')
                 if len(typeB) > 0:
                     myprint('{\\bf Citations Type B:}')
                     myprint('\\begin{itemize}')
-                    for pc in sorted(typeB , key=lambda pp: pp.year):
+                    for pc in sorted(typeB , key=lambda pp: (pp.year, pp.author[0])):
                         myprint('\item {}'.format(pretty_ref(pc)))
                     myprint('\end{itemize}')
                 myprint('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%')
