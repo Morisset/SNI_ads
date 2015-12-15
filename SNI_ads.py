@@ -4,7 +4,7 @@ Created on 14 dec. 2015
 
 @author: christophemorisset
 
-VERSION 2.2
+VERSION 2.3
 '''
 
 
@@ -15,14 +15,15 @@ from unidecode import unidecode as uni
 requests.packages.urllib3.disable_warnings()
 
 cv = lambda str: unicode(str).encode('utf8')
-cv = lambda str: uni(str)
+cv = lambda str: uni(str).replace('$', '').replace('#', '').replace('&', '')
 
+"""
 def cv(str):
     if type(str) is str:
         return uni(str)
     else:
         return [cv(s) for s in str]
-    
+"""    
 
 def pretty_author_name(authors):
     aspl = authors.split(",")
@@ -105,7 +106,7 @@ def print_results(author, papers, citations, filename=None):
     
     myprint('\\documentclass{letter}')
     myprint('\\begin{document}')
-    
+    myprint('\\begin{enumerate}')
     for p in sorted(papers , key=lambda pp: pp.year):
         typeA = [] # no autocitas
         typeB = [] # autocitas por coauthor
@@ -127,22 +128,23 @@ def print_results(author, papers, citations, filename=None):
                     typeB.append(citing)
                 else:
                     typeA.append(citing)
-            myprint('{} \\\ Total = {}, Type A = {}, type B = {}, type C = {}'.format(pretty_ref(p), p.citation_count,
+            if len(typeA) + len(typeB) > 0:
+                myprint('\item {} \\\ Total = {}, Type A = {}, type B = {}, type C = {} \\\ '.format(pretty_ref(p), p.citation_count,
                                                                                       len(typeA), len(typeB), len(typeC)))
-            if len(typeA) > 0:
-                myprint('{\\bf Citations Type A:}')
-                myprint('\\begin{itemize}')
-                for pc in typeA:
-                    myprint('\item {}'.format(pretty_ref(pc)))
-                myprint('\end{itemize}')
-            if len(typeB) > 0:
-                myprint('{\\bf Citations Type B:}')
-                myprint('\\begin{itemize}')
-                for pc in typeB:
-                    myprint('\item {}'.format(pretty_ref(pc)))
-                myprint('\end{itemize}')
-            myprint('\\hline')
-            myprint('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%')
+                if len(typeA) > 0:
+                    myprint('{\\bf Citations Type A:}')
+                    myprint('\\begin{itemize}')
+                    for pc in sorted(typeA , key=lambda pp: pp.year):
+                        myprint('\item {}'.format(pretty_ref(pc)))
+                    myprint('\end{itemize}')
+                if len(typeB) > 0:
+                    myprint('{\\bf Citations Type B:}')
+                    myprint('\\begin{itemize}')
+                    for pc in sorted(typeB , key=lambda pp: pp.year):
+                        myprint('\item {}'.format(pretty_ref(pc)))
+                    myprint('\end{itemize}')
+                myprint('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%')
+    myprint('\\end{enumerate}')
     myprint('\end{document}')
     if filename is not None and type(filename) is not file:
         f.close()
@@ -150,7 +152,7 @@ def print_results(author, papers, citations, filename=None):
 
 
 """
-ads.config.token = "5KAUJBW123456789dHCzvJWn73WyKVvNvyugC87M"
+ads.config.token = "5KAUJBW123456789dHCzvJWn73WyKVvNvyugC87M" # this one is fake, you need to use your own token
 author = 'Morisset, C.'             
 articulos = get_papers(author)
 citas = get_citations(articulos)
