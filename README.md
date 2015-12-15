@@ -1,3 +1,5 @@
+Aun estoy trabajando en el programa, lo pueden usar para ver un poco como sale, pero tengo que resolver el problema de los acentos (convencer el programa que cuando Garcia cita García, es autocita...).
+
 Este programa esta hecho para generar el documento que CONACyT pide para los investigadores que renovan o entran en el SNI. En particular lo siguiente:
 
 " En la Sección “Citas de Artículos” adjunte un archivo en formato PDF no mayor a  2MB, que  contenga  la  relación  de  las  citas  externas  globales  a  su  obra, separando las citas por:
