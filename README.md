@@ -2,6 +2,8 @@
 * hay varias maneras de codificar los acentos, que no son todas compatibles.
 * a veces aparece dos veces el mismo articulo en la lista de citas: uno de ArXiv, otro de la revista "real". Hay que quitar el ArXiv...
 
+** UPDATE: Versión 3.x es mucho mas eficiente y no deberia tener problemas con el limite de numero de conexiones.**
+
 UPDATE: ya encontre una maneja de resolver el problema de los acentos (parcialmente...) y del acceso (se hacen mucho menos peticiones hacia ADS). La liga al program es la misma, verifiquen que es la version 2.4 al inicio del codigo. Verifique que corre bien el LaTex y que se genera un PDF bonito. 
 
 Este programa esta hecho para generar el documento que CONACyT pide para los investigadores que renovan o entran en el SNI. En particular lo siguiente:

@@ -14,7 +14,7 @@ from unidecode import unidecode as uni
 
 requests.packages.urllib3.disable_warnings()
 
-cv = lambda str: unicode(str).encode('utf8')
+#cv = lambda str: unicode(str).encode('utf8')
 cv = lambda str: uni(str).replace('$', '').replace('#', '').replace('&', '')
     
 
