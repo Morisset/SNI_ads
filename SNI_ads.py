@@ -35,17 +35,17 @@ def auts(p):
     return auts
    
 def pretty_ref(p):
-    if cv(p.year) is not None:
+    try:
         year = ', {}'.format(cv(p.year))
-    else:
+    except:
         year = ''
-    if cv(p.pub) is not None:
+    try:
         pub = ', {}'.format(cv(p.pub))
-    else:
+    except:
         pub = ''
-    if cv(p.volume) is not None:
+    try:
         volume = ', {}'.format(cv(p.volume))
-    else:
+    except:
         volume = ''
     try:
         page = ', {}'.format(cv(p.page[0]))
@@ -56,11 +56,12 @@ def pretty_ref(p):
            
 def get_papers(author):
     
-    res = ads.SearchQuery(author=author)
+    res = ads.SearchQuery(author=author, fl='author,title,year,pub, volume, citation, citation_count, bibcode')
     try:
         papers = list(res)
         print('Got {} papers for {}'.format(len(papers), author))
     except:
+        papers = None
         print('No papers')
     return papers
 
@@ -73,7 +74,7 @@ def get_citations(papers):
             if N_citations > 0:
                 citations[p.bibcode] = []
                 for citation in p.citation:
-                    citations[p.bibcode].append(ads.SearchQuery(bibcode=citation).next())
+                    citations[p.bibcode].append(ads.SearchQuery(bibcode=citation, fl='author,title,year,pub, volume').next())
                 print('Got {} citations for paper {}.'.format(N_citations, p.bibcode))
     return citations
 
@@ -145,4 +146,5 @@ citas = get_citations(articulos)
 print_results(author, articulos, citas)
 f = open('misrefs.tex', 'w')
 print_results(author, articulos, citas, f)
+f.close()
 """
