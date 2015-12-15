@@ -1,10 +1,8 @@
-**WARNING: este programa genera un fichero que TIENE QUE VERIFICAR, porque puede ser que aun tiene errores, por ejemplo:**
+**WARNING: este programa genera un fichero que TIENES QUE VERIFICAR, porque puede ser que aun tiene errores, por ejemplo:**
 * hay varias maneras de codificar los acentos, que no son todas compatibles.
 * a veces aparece dos veces el mismo articulo en la lista de citas: uno de ArXiv, otro de la revista "real". Hay que quitar el ArXiv...
 
 **UPDATE: Versión 3.x es mucho mas eficiente y no deberia tener problemas con el limite de numero de conexiones.**
-
-UPDATE: ya encontre una maneja de resolver el problema de los acentos (parcialmente...) y del acceso (se hacen mucho menos peticiones hacia ADS). La liga al program es la misma, verifiquen que es la version 3.x al inicio del codigo. Ya verifiqué que corre bien el LaTex y que se genera un PDF bonito. 
 
 Este programa esta hecho para generar el documento que CONACyT pide para los investigadores que renovan o entran en el SNI. En particular lo siguiente:
 
@@ -18,8 +16,8 @@ Una ves registrado, uno puede pedir un "token", o sea un clave que se requiere p
 
 Se hace por aca:
 https://ui.adsabs.harvard.edu/#user/settings/token
-Hay que recuperar una clave de este tipo:
-"5KAUJBW1d2fjjU6QdHCzvJWn73WyKVvNvrtgC87M"
+. Hay que recuperar una clave de este tipo:
+"5K123456789HCzvJWn7312345678987M"
 
 Otro paso antes de correr el programa es la instalación de la librarya python "ads".
 Supongo que tienen una distribución de python en buen estado, con el programa de manejo de paquetes. En este caso, solo hacer:
@@ -35,4 +33,6 @@ Et voilà!
 Ya pueden descargar el programa que hice desde aca: https://github.com/Morisset/SNI_ads/raw/master/SNI_ads.py
 
 Hay que guardarlo donde quieren y editarlo para cambiar un par de cosas al final: el nombre del autor y el token que han recuprado a la etapa anterior. Y quitar los """ para descomentar la parte que corre el codigo.
+
+Deberia resultar en un fichero LaTex, de lo cual se genera un PDF bonito. 
 
