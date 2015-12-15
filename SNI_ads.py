@@ -4,7 +4,7 @@ Created on 14 dec. 2015
 
 @author: christophemorisset
 
-VERSION 3.0
+VERSION 3.1
 '''
 
 
@@ -20,6 +20,7 @@ cv = lambda str: uni(str).replace('$', '').replace('#', '').replace('&', '')
 
 def pretty_author_name(authors):
     aspl = authors.split(",")
+    aspl = [a for a in aspl if a != u'']
     if len(aspl) > 1:
         res1 = aspl[0]
         if aspl[1].strip() != '':
