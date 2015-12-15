@@ -1,3 +1,7 @@
+WARNING: este programa genera un fichero que TIENE QUE MIRAR, porque puede ser que aun tiene errores, por ejemplo:
+1) hay varias maneras de codificar los acentos, que no son todas compatibles.
+2) a veces aparece dos veces el mismo articulo en la lista de citas: uno de ArXiv, otro de la revista "real". Hay que quitar el ArXiv...
+
 UPDATE: ya encontre una maneja de resolver el problema de los acentos y del acceso (se hacen mucho menos peticiones hacia ADS). La liga al program es la misma, verifiquen que es la version 2.0 al inicio del codigo.
 
 Este programa esta hecho para generar el documento que CONACyT pide para los investigadores que renovan o entran en el SNI. En particular lo siguiente:
