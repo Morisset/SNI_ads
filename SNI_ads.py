@@ -4,7 +4,7 @@ Created on 14 dec. 2015
 
 @author: christophemorisset
 
-VERSION 2.4
+VERSION 3.0
 '''
 
 
@@ -61,7 +61,8 @@ def pretty_ref(p):
            
 def get_papers(author):
     
-    res = ads.SearchQuery(author=author, fl='author, title, year, pub, volume, page, citation, citation_count, bibcode')
+    res = ads.SearchQuery(author=author, 
+                          fl='author, title, year, pub, volume, page, citation, citation_count, bibcode')
     try:
         papers = list(res)
         print('Got {} papers for {}'.format(len(papers), author))
@@ -77,14 +78,15 @@ def get_citations(papers):
         for p in papers:
             N_citations = p.citation_count
             if N_citations > 0:
-                citations[p.bibcode] = []
-                for citation in p.citation:
-                    citations[p.bibcode].append(ads.SearchQuery(bibcode=citation, fl='author, title, year, pub, volume, page').next())
+                res = ads.SearchQuery(q='citations(bibcode:{})'.format(p.bibcode), 
+                                      fl='author, title, year, pub, volume, page, citation, citation_count, bibcode')
+                citations[p.bibcode] = list(res)
                 print('Got {} citations for paper {}.'.format(N_citations, p.bibcode))
     return citations
 
 def print_results(author, papers, citations, filename=None):
-    
+    token = ads.config.token # store the token
+    ads.config.token = '' # we don't need to connect to ads from now (but it we allow it, it will...)
     if filename is None:
         def myprint(str):
             print(str)
@@ -141,7 +143,7 @@ def print_results(author, papers, citations, filename=None):
     myprint('\end{document}')
     if filename is not None and type(filename) is not file:
         f.close()
-
+    ads.config.token = token # redefine the token as it was when entering
 
 
 """
