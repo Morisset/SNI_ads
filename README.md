@@ -2,7 +2,7 @@
 * hay varias maneras de codificar los acentos, que no son todas compatibles.
 * a veces aparece dos veces el mismo articulo en la lista de citas: uno de ArXiv, otro de la revista "real". Hay que quitar el ArXiv...
 
-UPDATE: ya encontre una maneja de resolver el problema de los acentos y del acceso (se hacen mucho menos peticiones hacia ADS). La liga al program es la misma, verifiquen que es la version 2.0 al inicio del codigo.
+UPDATE: ya encontre una maneja de resolver el problema de los acentos (parcialmente...) y del acceso (se hacen mucho menos peticiones hacia ADS). La liga al program es la misma, verifiquen que es la version 2.4 al inicio del codigo. Verifiqué que corre bien el PDF. 
 
 Este programa esta hecho para generar el documento que CONACyT pide para los investigadores que renovan o entran en el SNI. En particular lo siguiente:
 
@@ -36,5 +36,5 @@ Hay que guardarlo donde quieren y editarlo para cambiar un par de cosas al final
 
 Aun estoy trabajando con el programa, pero por lo menos ya lo vi funcionar.
 El problema es que despues de hacer varios intentos, el sistema ADS me ha bloqueado! Mand√© un email para preguntarles de que sirve un acceso especial si no se puede recuperar unas centenas de referencias, les aviso cuando se mas...
-UPDATE: me contestaron, dandome un truco para reducir las peticiones a ADS. Sali√≥ bien para mi, pero a ver con colegas que tienen muchas citas...
+UPDATE: me contestaron, dandome un truco para reducir las peticiones a ADS. El numero de peticiones a ADS esta limitado a 5000 por día. Sali√≥ bien para mi, pero a ver con colegas que tienen muchas citas...
 

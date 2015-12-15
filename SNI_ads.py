@@ -4,7 +4,7 @@ Created on 14 dec. 2015
 
 @author: christophemorisset
 
-VERSION 2.3
+VERSION 2.4
 '''
 
 
