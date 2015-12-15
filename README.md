@@ -4,7 +4,7 @@
 
 **UPDATE: Versión 3.x es mucho mas eficiente y no deberia tener problemas con el limite de numero de conexiones.**
 
-UPDATE: ya encontre una maneja de resolver el problema de los acentos (parcialmente...) y del acceso (se hacen mucho menos peticiones hacia ADS). La liga al program es la misma, verifiquen que es la version 3.x al inicio del codigo. Verifique que corre bien el LaTex y que se genera un PDF bonito. 
+UPDATE: ya encontre una maneja de resolver el problema de los acentos (parcialmente...) y del acceso (se hacen mucho menos peticiones hacia ADS). La liga al program es la misma, verifiquen que es la version 3.x al inicio del codigo. Ya verifiqué que corre bien el LaTex y que se genera un PDF bonito. 
 
 Este programa esta hecho para generar el documento que CONACyT pide para los investigadores que renovan o entran en el SNI. En particular lo siguiente:
 
@@ -35,8 +35,4 @@ Et voilà!
 Ya pueden descargar el programa que hice desde aca: https://github.com/Morisset/SNI_ads/raw/master/SNI_ads.py
 
 Hay que guardarlo donde quieren y editarlo para cambiar un par de cosas al final: el nombre del autor y el token que han recuprado a la etapa anterior. Y quitar los """ para descomentar la parte que corre el codigo.
-
-Aun estoy trabajando con el programa, pero por lo menos ya lo vi funcionar.
-El problema es que despues de hacer varios intentos, el sistema ADS me ha bloqueado! Mandé un email para preguntarles de que sirve un acceso especial si no se puede recuperar unas centenas de referencias, les aviso cuando se mas...
-UPDATE: me contestaron, dandome un truco para reducir las peticiones a ADS. El numero de peticiones a ADS esta limitado a 5000 por día. Salió bien para mi, pero a ver con colegas que tienen muchas citas...
 
