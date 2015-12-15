@@ -1,6 +1,7 @@
+UPDATE: ya encontre una maneja de resolver el problema de los acentos y del acceso (se hacen mucho menos peticiones hacia ADS). La liga al program es la misma, verifiquen que es la version 2.0 al inicio del codigo.
+
 Aun estoy trabajando en el programa, lo pueden usar para ver un poco como sale, pero tengo que resolver el problema de los acentos (convencer el programa que cuando Garcia cita García, es autocita...).
 Cambiare este mensaje cuando estos problemas estan arreglados, vigilar esta pagina...
-UPDATE: ya encontre una maneja de resolver el problema de los acentos y del acceso (se hacen mucho menos peticiones hacia ADS). La liga al program es la misma, verifiquen que es la version 2.0 al inicio del codigo.
 
 Este programa esta hecho para generar el documento que CONACyT pide para los investigadores que renovan o entran en el SNI. En particular lo siguiente:
 
