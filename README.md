@@ -1,8 +1,5 @@
 UPDATE: ya encontre una maneja de resolver el problema de los acentos y del acceso (se hacen mucho menos peticiones hacia ADS). La liga al program es la misma, verifiquen que es la version 2.0 al inicio del codigo.
 
-Aun estoy trabajando en el programa, lo pueden usar para ver un poco como sale, pero tengo que resolver el problema de los acentos (convencer el programa que cuando Garcia cita García, es autocita...).
-Cambiare este mensaje cuando estos problemas estan arreglados, vigilar esta pagina...
-
 Este programa esta hecho para generar el documento que CONACyT pide para los investigadores que renovan o entran en el SNI. En particular lo siguiente:
 
 " En la Sección “Citas de Artículos” adjunte un archivo en formato PDF no mayor a  2MB, que  contenga  la  relación  de  las  citas  externas  globales  a  su  obra, separando las citas por:
@@ -23,16 +20,17 @@ Supongo que tienen una distribución de python en buen estado, con el programa d
 
 pip install ads
 
-Et voilà!
-
-Puede ser que necesiten tambien unidecode:
+Puede ser que necesiten tambien unidecode (si ya lo tienen, lo siguiente no va hacer daños):
 
 pip install unidecode
+
+Et voilà!
 
 Ya pueden descargar el programa que hice desde aca: https://github.com/Morisset/SNI_ads/raw/master/SNI_ads.py
 
 Hay que guardarlo donde quieren y editarlo para cambiar un par de cosas al final: el nombre del autor y el token que han recuprado a la etapa anterior. Y quitar los """ para descomentar la parte que corre el codigo.
 
-Aun estoy trabajando con el programa, pero por lo menos ya lo vi trabajar.
+Aun estoy trabajando con el programa, pero por lo menos ya lo vi funcionar.
 El problema es que despues de hacer varios intentos, el sistema ADS me ha bloqueado! Mandé un email para preguntarles de que sirve un acceso especial si no se puede recuperar unas centenas de referencias, les aviso cuando se mas...
+UPDATE: me contestaron, dandome un truco para reducir las peticiones a ADS. Salió bien para mi, pero a ver con colegas que tienen muchas citas...
 
