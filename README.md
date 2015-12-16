@@ -22,11 +22,11 @@ https://ui.adsabs.harvard.edu/#user/settings/token
 Otro paso antes de correr el programa es la instalación de la librarya python "ads".
 Supongo que tienen una distribución de python en buen estado, con el programa de manejo de paquetes. En este caso, solo hacer:
 
-pip install ads
+`pip install ads`
 
 Puede ser que necesiten tambien unidecode (si ya lo tienen, lo siguiente no va hacer daños):
 
-pip install unidecode
+`pip install unidecode`
 
 Et voilà!
 
@@ -34,7 +34,7 @@ Ya pueden descargar el programa que hice desde aca: https://github.com/Morisset/
 
 NEW in version 4.x: Hay que guardarlo donde quieren, cambiar los derechos para que sea un ejecutable (chmod a+x SNI_ads.py) y ejecutar desde el directorio donde esta guardado:
 
-SNI_ads.py 'Morisset, C.' -t "7hF3MkKTH1234567890CZAX6BUKskw4T1"
+`SNI_ads.py 'Morisset, C.' -t "7hF3MkKTH1234567890CZAX6BUKskw4T1"`
 
 donde se da el nombre del author que buscas y el token que has recuperado del sitio ADS.
 
