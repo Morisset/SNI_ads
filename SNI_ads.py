@@ -40,7 +40,7 @@ def auts(p):
         auts = ', '.join([pretty_author_name(a) for a in p.author])
     return auts
    
-def pretty_ref(p):
+def pretty_ref(p, with_title=False):
     try:
         year = ', {}'.format(cv(p.year))
     except:
@@ -57,8 +57,15 @@ def pretty_ref(p):
         page = ', {}'.format(cv(p.page[0]))
     except:
         page = ''
+    if with_title:
+        try:
+            title = ', {{\it {}}}'.format(cv(p.title[0]))
+        except:
+            title = ''
+    else:
+        title = ''
         
-    return('{}{}{}{}{}'.format(auts(p), year, pub, volume, page))
+    return('{}{}{}{}{}{}'.format(auts(p), year, title, pub, volume, page))
            
 def get_papers(author):
     
@@ -125,8 +132,9 @@ def print_results(author, papers, citations, filename=None):
                 else:
                     typeA.append(citing)
             if len(typeA) + len(typeB) > 0:
-                myprint('\item {} \\\ Total = {}, Type A = {}, type B = {}, type C = {} \\\ '.format(pretty_ref(p), p.citation_count,
-                                                                                      len(typeA), len(typeB), len(typeC)))
+                myprint('\item {} \\\ Total = {}, Type A = {}, type B = {}, type C = {} \\\ '.format(pretty_ref(p, with_title=True), 
+                                                                                                     p.citation_count,
+                                                                                                     len(typeA), len(typeB), len(typeC)))
                 if len(typeA) > 0:
                     myprint('{\\bf Citations Type A:}')
                     myprint('\\begin{itemize}')
@@ -146,6 +154,14 @@ def print_results(author, papers, citations, filename=None):
         f.close()
     ads.config.token = token # redefine the token as it was when entering
 
+
+def do_all(author):
+    articulos = get_papers(author)
+    citas = get_citations(articulos)
+    print_results(author, articulos, citas)
+    f = open('misrefs_{}.tex'.format(author), 'w')
+    print_results(author, articulos, citas, f)
+    f.close()
 
 """
 ads.config.token = "5KAUJBW123456789dHCzvJWn73WyKVvNvyugC87M" # this one is fake, you need to use your own token
