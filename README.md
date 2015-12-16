@@ -39,5 +39,5 @@ NEW in version 4.x: Hay que guardarlo donde quieren, cambiar los derechos para q
 
 donde se da el nombre del author (mejor poner en nombre y el apelido) que buscas y el token que has recuperado del sitio ADS.
 
-Deberia resultar en un fichero LaTex de nombre en este caso "refs_MorissetC.tex" , de lo cual se genera un PDF bonito. 
+Deberia resultar en un fichero LaTex de nombre en este caso "refs_MorissetChristophe.tex" , de lo cual se genera un PDF bonito. 
 
