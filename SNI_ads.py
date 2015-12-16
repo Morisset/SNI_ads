@@ -12,9 +12,11 @@ import requests.packages.urllib3
 from unidecode import unidecode as uni
 import argparse
 
-__version__ = "4.1"
+__version__ = "4.2"
 
 requests.packages.urllib3.disable_warnings()
+MAX_pages = 100
+MAX_papers = 1000000
 
 #cv = lambda str: unicode(str).encode('utf8')
 cv = lambda str: uni(str).replace('$', '').replace('#', '').replace('&', '').replace('_', '\_')
@@ -54,6 +56,7 @@ def pretty_ref(p, with_title=False):
         pub = ''
     try:
         volume = ', {}'.format(cv(p.volume))
+        #volume=''
     except:
         volume = ''
     try:
@@ -72,9 +75,10 @@ def pretty_ref(p, with_title=False):
            
 def get_papers(author, max_papers=None):
     if max_papers is None:
-        max_papers = 1000000
+        max_papers = MAX_papers
     res = ads.SearchQuery(author=author, 
-                          fl='author, title, year, pub, volume, page, citation, citation_count, bibcode')
+                          fl='author, title, year, pub, volume, page, citation, citation_count, bibcode',
+                          max_pages=MAX_pages)
     try:
         papers = list(res)
     except:
@@ -91,7 +95,8 @@ def get_citations(papers):
             N_citations = p.citation_count
             if N_citations > 0:
                 res = ads.SearchQuery(q='citations(bibcode:{})'.format(p.bibcode), 
-                                      fl='author, title, year, pub, volume, page, citation, citation_count, bibcode')
+                                      fl='author, title, year, pub, volume, page, bibcode',
+                                      max_pages=MAX_pages)
                 citations[p.bibcode] = list(res)
                 print('Got {} citations for paper {}.'.format(N_citations, p.bibcode))
     return citations
@@ -143,13 +148,13 @@ def print_results(author, papers, citations, filename=None):
                     myprint('{\\bf Citations Type A:}')
                     myprint('\\begin{itemize}')
                     for pc in sorted(typeA , key=lambda pp: (pp.year, pp.author[0])):
-                        myprint('\\item {}'.format(pretty_ref(pc)))
+                        myprint('\\item {}'.format(pretty_ref(pc))) #this one!!!
                     myprint('\\end{itemize}')
                 if len(typeB) > 0:
                     myprint('{\\bf Citations Type B:}')
                     myprint('\\begin{itemize}')
                     for pc in sorted(typeB , key=lambda pp: (pp.year, pp.author[0])):
-                        myprint('\\item {}'.format(pretty_ref(pc)))
+                        myprint('\\item {}'.format(pretty_ref(pc))) #this one!!!
                     myprint('\\end{itemize}')
                 myprint('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%')
     myprint('\\end{enumerate}')
@@ -158,15 +163,17 @@ def print_results(author, papers, citations, filename=None):
         f.close()
     ads.config.token = token # redefine the token as it was when entering
 
-def do_all(author, max_papers=None):
+def do_all(author, max_papers=None, no_screen=False, no_file=False):
     articulos = get_papers(author, max_papers=max_papers)
     if articulos is not None and len(articulos) != 0:
         citas = get_citations(articulos)
-        print_results(author, articulos, citas)
-        filename = 'refs_{}.tex'.format(clean_author(author))
-        print('Writing the LaTex file {}'.format(filename))
-        print_results(author, articulos, citas, filename=filename)
-        print('Done')
+        if not no_screen:
+            print_results(author, articulos, citas)
+        if not no_file:
+            filename = 'refs_{}.tex'.format(clean_author(author))
+            print('Writing the LaTex file {}'.format(filename))
+            print_results(author, articulos, citas, filename=filename)
+            print('Done')
     else:
         print('No papers found, something went wrong. Check ADS token and Internet connection.')
         
@@ -189,13 +196,15 @@ if __name__ == '__main__':
     parser.add_argument("author", help="Author to search for.")
     parser.add_argument("-t", "--token", help="ADS token. Unused if the environment variable ADS_DEV_KEY is defined.")
     parser.add_argument("-m", "--max_papers", help="Maximum number of papers to consider.", type=int)
+    parser.add_argument("-ns", "--no_screen", help="No screen output.", action="store_true")
+    parser.add_argument("-nf", "--no_file", help="No file output.", action="store_true")
     parser.add_argument("-V", "--version", action="version", version=__version__,
                         help="Display version information and exit.")
     args = parser.parse_args()
     author = args.author
     if args.token is not None:
         ads.config.token = args.token
-    do_all(author, max_papers=args.max_papers)
+    do_all(author, max_papers=args.max_papers, no_screen=args.no_screen, no_file=args.no_file)
     
     
     
