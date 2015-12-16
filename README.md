@@ -34,5 +34,11 @@ Ya pueden descargar el programa que hice desde aca: https://github.com/Morisset/
 
 Hay que guardarlo donde quieren y editarlo para cambiar un par de cosas al final: el nombre del autor y el token que han recuprado a la etapa anterior. Y quitar los """ para descomentar la parte que corre el codigo.
 
-Deberia resultar en un fichero LaTex, de lo cual se genera un PDF bonito. 
+Otra manera de hacer todo de una ves es, desde ipython:
+
+%run SNI_ads.py
+
+do_all('Morisset, C.')
+
+Deberia resultar en un fichero LaTex de nombre en este caso "refs_MorissetC.tex" , de lo cual se genera un PDF bonito. 
 
