@@ -12,10 +12,10 @@ import requests.packages.urllib3
 from unidecode import unidecode as uni
 import argparse
 
-__version__ = "4.2"
+__version__ = "4.3"
 
 requests.packages.urllib3.disable_warnings()
-MAX_pages = 100
+MAX_pages = 1000
 MAX_papers = 1000000
 
 #cv = lambda str: unicode(str).encode('utf8')
@@ -24,6 +24,9 @@ cv = lambda str: uni(str).replace('$', '').replace('#', '').replace('&', '').rep
 clean_author = lambda author: ''.join([s for s in author if s not in ('.', ' ', ',')])
 
 def pretty_author_name(authors):
+    """
+    Returns the author name in the form Smith, J.
+    """
     aspl = authors.split(",")
     aspl = [a for a in aspl if a != u'']
     if len(aspl) > 1:
@@ -39,6 +42,10 @@ def pretty_author_name(authors):
         return authors
 
 def auts(p):
+    """
+    Returns p.author in the form of a string with a maximum of 5 authors (if more, uses et al.)
+    """
+    
     if len(p.author) > 5:
         auts = ', '.join([pretty_author_name(a) for a in p.author][0:5]) + ' et al.'
     else:
@@ -46,6 +53,12 @@ def auts(p):
     return auts
    
 def pretty_ref(p, with_title=False):
+    """
+    Returns a string in the form
+    authors, year, {\it title}, pub, volume, page
+    by default, title is not included. Changed by with_title keyword.
+    type(p) is ads.search.Article
+    """
     try:
         year = ', {}'.format(cv(p.year))
     except:
@@ -74,6 +87,12 @@ def pretty_ref(p, with_title=False):
     return('{}{}{}{}{}{}'.format(auts(p), year, title, pub, volume, page))
            
 def get_papers(author, max_papers=None):
+    """
+    Returns a list of all the papers from author that contain at least one citation.
+    max_paper can reduce the number of papers. The default is MAX_papers (1000000)
+    author is a string.
+    The papers are ads.search.Article
+    """
     if max_papers is None:
         max_papers = MAX_papers
     res = ads.SearchQuery(author=author, 
@@ -88,7 +107,11 @@ def get_papers(author, max_papers=None):
     return papers
 
 def get_citations(papers):
-    
+    """
+    papers: list of ads.search.Article
+    Returns a dictionnary where each key corresponds to the bibcode of one element of papers and the value is a list of 
+    papers citing the given paper.
+    """
     citations = {}
     if papers is not None:
         for p in sorted(papers , key=lambda pp: (pp.year, pp.author[0])):
@@ -102,6 +125,9 @@ def get_citations(papers):
     return citations
 
 def print_results(author, papers, citations, filename=None):
+    """
+    Print the results on the screen and in a file.
+    """
     token = ads.config.token # store the token
     ads.config.token = '' # we don't need to connect to ads in this function (but it we allow it, it will...)
     if filename is None:
@@ -164,6 +190,9 @@ def print_results(author, papers, citations, filename=None):
     ads.config.token = token # redefine the token as it was when entering
 
 def do_all(author, max_papers=None, no_screen=False, no_file=False):
+    """
+    Run the different part of the program to directly obtain 
+    """
     articulos = get_papers(author, max_papers=max_papers)
     if articulos is not None and len(articulos) != 0:
         citas = get_citations(articulos)
