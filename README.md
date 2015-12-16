@@ -35,9 +35,9 @@ Ya pueden descargar el programa que hice desde aca: https://github.com/Morisset/
 
 NEW in version 4.x: Hay que guardarlo donde quieren, cambiar los derechos para que sea un ejecutable (chmod a+x SNI_ads.py) y ejecutar desde el directorio donde esta guardado:
 
-`SNI_ads.py 'Morisset, C.' -t "5K123456789HCzvJWn7312345678987M"`
+`SNI_ads.py 'Morisset, Christophe' -t "5K123456789HCzvJWn7312345678987M"`
 
-donde se da el nombre del author que buscas y el token que has recuperado del sitio ADS.
+donde se da el nombre del author (mejor poner en nombre y el apelido) que buscas y el token que has recuperado del sitio ADS.
 
 Deberia resultar en un fichero LaTex de nombre en este caso "refs_MorissetC.tex" , de lo cual se genera un PDF bonito. 
 
