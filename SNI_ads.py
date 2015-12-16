@@ -4,7 +4,7 @@ Created on 14 dec. 2015
 
 @author: christophemorisset
 
-VERSION 3.1
+VERSION 3.2
 '''
 
 
@@ -17,6 +17,7 @@ requests.packages.urllib3.disable_warnings()
 #cv = lambda str: unicode(str).encode('utf8')
 cv = lambda str: uni(str).replace('$', '').replace('#', '').replace('&', '').replace('_', '\_')
     
+clean_author = lambda author: ''.join([s for s in author if s not in ('.', ' ', ',')])
 
 def pretty_author_name(authors):
     aspl = authors.split(",")
@@ -83,7 +84,7 @@ def get_citations(papers):
     
     citations = {}
     if papers is not None:
-        for p in papers:
+        for p in sorted(papers , key=lambda pp: (pp.year, pp.author[0])):
             N_citations = p.citation_count
             if N_citations > 0:
                 res = ads.SearchQuery(q='citations(bibcode:{})'.format(p.bibcode), 
@@ -154,12 +155,11 @@ def print_results(author, papers, citations, filename=None):
         f.close()
     ads.config.token = token # redefine the token as it was when entering
 
-
 def do_all(author):
     articulos = get_papers(author)
     citas = get_citations(articulos)
     print_results(author, articulos, citas)
-    f = open('misrefs_{}.tex'.format(author), 'w')
+    f = open('refs_{}.tex'.format(clean_author(author)), 'w')
     print_results(author, articulos, citas, f)
     f.close()
 

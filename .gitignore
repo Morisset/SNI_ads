@@ -1,10 +1,5 @@
-
 .project
-
 .pydevproject
-
 *.prefs
-
-misrefs*
-
+refs_*
 ADS_tokens.txt
