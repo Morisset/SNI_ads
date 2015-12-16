@@ -12,7 +12,7 @@ import requests.packages.urllib3
 from unidecode import unidecode as uni
 import argparse
 
-__version__ = "4.0"
+__version__ = "4.1"
 
 requests.packages.urllib3.disable_warnings()
 
@@ -70,16 +70,17 @@ def pretty_ref(p, with_title=False):
         
     return('{}{}{}{}{}{}'.format(auts(p), year, title, pub, volume, page))
            
-def get_papers(author):
-    
+def get_papers(author, max_papers=None):
+    if max_papers is None:
+        max_papers = 1000000
     res = ads.SearchQuery(author=author, 
                           fl='author, title, year, pub, volume, page, citation, citation_count, bibcode')
     try:
         papers = list(res)
-        print('Got {} papers for {}'.format(len(papers), author))
     except:
         papers = None
-        print('No papers')
+    papers = [p for p in papers if p.citation_count > 0][0:max_papers]
+    print('Got {} papers from {} with at least one citation'.format(len(papers), author))
     return papers
 
 def get_citations(papers):
@@ -97,7 +98,7 @@ def get_citations(papers):
 
 def print_results(author, papers, citations, filename=None):
     token = ads.config.token # store the token
-    ads.config.token = '' # we don't need to connect to ads from now (but it we allow it, it will...)
+    ads.config.token = '' # we don't need to connect to ads in this function (but it we allow it, it will...)
     if filename is None:
         def myprint(str):
             print(str)
@@ -106,7 +107,7 @@ def print_results(author, papers, citations, filename=None):
         def myprint(str):        
             f.write(str + '\n')
     else:
-        f = open(filename)
+        f = open(filename, 'w')
         def myprint(str):        
             f.write(str + '\n')
     
@@ -135,36 +136,37 @@ def print_results(author, papers, citations, filename=None):
                 else:
                     typeA.append(citing)
             if len(typeA) + len(typeB) > 0:
-                myprint('\item {} \\\ Total = {}, Type A = {}, type B = {}, type C = {} \\\ '.format(pretty_ref(p, with_title=True), 
+                myprint('\\item {} \\\ Total = {}, Type A = {}, type B = {}, type C = {} \\\ '.format(pretty_ref(p, with_title=True), 
                                                                                                      p.citation_count,
                                                                                                      len(typeA), len(typeB), len(typeC)))
                 if len(typeA) > 0:
                     myprint('{\\bf Citations Type A:}')
                     myprint('\\begin{itemize}')
                     for pc in sorted(typeA , key=lambda pp: (pp.year, pp.author[0])):
-                        myprint('\item {}'.format(pretty_ref(pc)))
-                    myprint('\end{itemize}')
+                        myprint('\\item {}'.format(pretty_ref(pc)))
+                    myprint('\\end{itemize}')
                 if len(typeB) > 0:
                     myprint('{\\bf Citations Type B:}')
                     myprint('\\begin{itemize}')
                     for pc in sorted(typeB , key=lambda pp: (pp.year, pp.author[0])):
-                        myprint('\item {}'.format(pretty_ref(pc)))
-                    myprint('\end{itemize}')
+                        myprint('\\item {}'.format(pretty_ref(pc)))
+                    myprint('\\end{itemize}')
                 myprint('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%')
     myprint('\\end{enumerate}')
-    myprint('\end{document}')
+    myprint('\\end{document}')
     if filename is not None and type(filename) is not file:
         f.close()
     ads.config.token = token # redefine the token as it was when entering
 
-def do_all(author):
-    articulos = get_papers(author)
-    if articulos is not None:
+def do_all(author, max_papers=None):
+    articulos = get_papers(author, max_papers=max_papers)
+    if articulos is not None and len(articulos) != 0:
         citas = get_citations(articulos)
         print_results(author, articulos, citas)
-        f = open('refs_{}.tex'.format(clean_author(author)), 'w')
-        print_results(author, articulos, citas, f)
-        f.close()
+        filename = 'refs_{}.tex'.format(clean_author(author))
+        print('Writing the LaTex file {}'.format(filename))
+        print_results(author, articulos, citas, filename=filename)
+        print('Done')
     else:
         print('No papers found, something went wrong. Check ADS token and Internet connection.')
         
@@ -186,13 +188,14 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument("author", help="Author to search for.")
     parser.add_argument("-t", "--token", help="ADS token. Unused if the environment variable ADS_DEV_KEY is defined.")
+    parser.add_argument("-m", "--max_papers", help="Maximum number of papers to consider.", type=int)
     parser.add_argument("-V", "--version", action="version", version=__version__,
                         help="Display version information and exit.")
     args = parser.parse_args()
     author = args.author
     if args.token is not None:
         ads.config.token = args.token
-    do_all(author)
+    do_all(author, max_papers=args.max_papers)
     
     
     
