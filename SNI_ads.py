@@ -1,16 +1,18 @@
-# coding: utf-8
+#!/usr/bin/env python
 '''
 Created on 14 dec. 2015
 
 @author: christophemorisset
 
-VERSION 3.2
 '''
 
 
 import ads
 import requests.packages.urllib3
 from unidecode import unidecode as uni
+import argparse
+
+__version__ = "4.0"
 
 requests.packages.urllib3.disable_warnings()
 
@@ -157,19 +159,40 @@ def print_results(author, papers, citations, filename=None):
 
 def do_all(author):
     articulos = get_papers(author)
-    citas = get_citations(articulos)
-    print_results(author, articulos, citas)
-    f = open('refs_{}.tex'.format(clean_author(author)), 'w')
-    print_results(author, articulos, citas, f)
-    f.close()
-
+    if articulos is not None:
+        citas = get_citations(articulos)
+        print_results(author, articulos, citas)
+        f = open('refs_{}.tex'.format(clean_author(author)), 'w')
+        print_results(author, articulos, citas, f)
+        f.close()
+    else:
+        print('No papers found, something went wrong. Check ADS token and Internet connection.')
+        
 """
+# The following is used if you want to have access to the intermediate results. Otherwise, use the command-line way.
+import ads
+import SNI_ads
 ads.config.token = "5KAUJBW123456789dHCzvJWn73WyKVvNvyugC87M" # this one is fake, you need to use your own token
 author = 'Morisset, C.'             
-articulos = get_papers(author)
-citas = get_citations(articulos)
-print_results(author, articulos, citas)
-f = open('misrefs.tex', 'w')
-print_results(author, articulos, citas, f)
+articulos = SNI_ads.get_papers(author)
+citas = SNI_ads.get_citations(articulos)
+SNI_ads.print_results(author, articulos, citas)
+f = open('refs_{}.tex'.format(SNI_ads.clean_author(author)), 'w')
+SNI_ads.print_results(author, articulos, citas, f)
 f.close()
 """
+
+if __name__ == '__main__':            
+    parser = argparse.ArgumentParser()
+    parser.add_argument("author", help="Author to search for.")
+    parser.add_argument("-t", "--token", help="ADS token. Unused if the environment variable ADS_DEV_KEY is defined.")
+    parser.add_argument("-V", "--version", action="version", version=__version__,
+                        help="Display version information and exit.")
+    args = parser.parse_args()
+    author = args.author
+    if args.token is not None:
+        ads.config.token = args.token
+    do_all(author)
+    
+    
+    

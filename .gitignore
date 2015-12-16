@@ -3,3 +3,5 @@
 *.prefs
 refs_*
 ADS_tokens.txt
+
+*.pyc

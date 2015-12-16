@@ -2,7 +2,7 @@
 * hay varias maneras de codificar los acentos, que no son todas compatibles.
 * a veces aparece dos veces el mismo articulo en la lista de citas: uno de ArXiv, otro de la revista "real". Hay que quitar el ArXiv...
 
-**UPDATE: Versión 3.x es mucho mas eficiente y no deberia tener problemas con el limite de numero de conexiones.**
+**UPDATE: Versión 4.x es mucho mas eficiente y no deberia tener problemas con el limite de numero de conexiones.**
 
 Este programa esta hecho para generar el documento que CONACyT pide para los investigadores que renovan o entran en el SNI. En particular lo siguiente:
 
@@ -32,13 +32,11 @@ Et voilà!
 
 Ya pueden descargar el programa que hice desde aca: https://github.com/Morisset/SNI_ads/raw/master/SNI_ads.py
 
-Hay que guardarlo donde quieren y editarlo para cambiar un par de cosas al final: el nombre del autor y el token que han recuprado a la etapa anterior. Y quitar los """ para descomentar la parte que corre el codigo.
+NEW in version 4.x: Hay que guardarlo donde quieren, cambiar los derechos para que sea un ejecutable (chmod a+x SNI_ads.py) y ejecutar desde el directorio donde esta guardado:
 
-Otra manera de hacer todo de una ves es, desde ipython:
+SNI_ads.py 'Morisset, C.' -t "7hF3MkKTH1234567890CZAX6BUKskw4T1"
 
-%run SNI_ads.py
-
-do_all('Morisset, C.')
+donde se da el nombre del author que buscas y el token que has recuperado del sitio ADS.
 
 Deberia resultar en un fichero LaTex de nombre en este caso "refs_MorissetC.tex" , de lo cual se genera un PDF bonito. 
 
