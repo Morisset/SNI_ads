@@ -12,7 +12,7 @@ import requests.packages.urllib3
 from unidecode import unidecode as uni
 import argparse
 
-__version__ = "4.3"
+__version__ = "4.4"
 
 requests.packages.urllib3.disable_warnings()
 MAX_pages = 1000
@@ -103,6 +103,11 @@ def get_papers(author, max_papers=None):
     except:
         papers = None
     papers = [p for p in papers if p.citation_count > 0][0:max_papers]
+    # The following to resolve a bug when Volume is undefined
+    for ppp in papers:
+        if "volume" not in ppp.__dict__.keys():
+            ppp.__dict__['volume'] = None
+            ppp.__dict__['_raw'][u'volume'] = None
     print('Got {} papers from {} with at least one citation'.format(len(papers), author))
     return papers
 
@@ -120,7 +125,13 @@ def get_citations(papers):
                 res = ads.SearchQuery(q='citations(bibcode:{})'.format(p.bibcode), 
                                       fl='author, title, year, pub, volume, page, bibcode',
                                       max_pages=MAX_pages)
-                citations[p.bibcode] = list(res)
+                citas = list(res)
+                # The following to resolve a bug when Volume is undefined
+                for ppp in citas:
+                    if "volume" not in ppp.__dict__.keys():
+                        ppp.__dict__['volume'] = None
+                        ppp.__dict__['_raw'][u'volume'] = None
+                citations[p.bibcode] = citas
                 print('Got {} citations for paper {}.'.format(N_citations, p.bibcode))
     return citations
 
