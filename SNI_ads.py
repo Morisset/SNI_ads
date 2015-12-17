@@ -103,7 +103,7 @@ def get_papers(author, max_papers=None):
     except:
         papers = None
     papers = [p for p in papers if p.citation_count > 0][0:max_papers]
-    # The following to resolve a bug when Volume is undefined
+    # The following to resolve a bug in ads when Volume is undefined. Will be removed when ads update.
     for ppp in papers:
         if "volume" not in ppp.__dict__.keys():
             ppp.__dict__['volume'] = None
@@ -126,7 +126,7 @@ def get_citations(papers):
                                       fl='author, title, year, pub, volume, page, bibcode',
                                       max_pages=MAX_pages)
                 citas = list(res)
-                # The following to resolve a bug when Volume is undefined
+                # The following to resolve a bug in ads when Volume is undefined. Will be removed when ads update.
                 for ppp in citas:
                     if "volume" not in ppp.__dict__.keys():
                         ppp.__dict__['volume'] = None
@@ -139,8 +139,6 @@ def print_results(author, papers, citations, filename=None):
     """
     Print the results on the screen and in a file.
     """
-    #token = ads.config.token # store the token
-    #ads.config.token = '' # we don't need to connect to ads in this function (but it we allow it, it will...)
     if filename is None:
         def myprint(str):
             print(str)
@@ -198,7 +196,6 @@ def print_results(author, papers, citations, filename=None):
     myprint('\\end{document}')
     if filename is not None and type(filename) is not file:
         f.close()
-    #ads.config.token = token # redefine the token as it was when entering
 
 def do_all(author, max_papers=None, no_screen=False, no_file=False):
     """
