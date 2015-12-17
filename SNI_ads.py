@@ -85,7 +85,15 @@ def pretty_ref(p, with_title=False):
         title = ''
         
     return('{}{}{}{}{}{}'.format(auts(p), year, title, pub, volume, page))
-           
+         
+def set_to_None(papers):
+    for p in papers:
+        for key in ('title', 'year', 'pub', 'volume', 'page'):
+            if key not in p.__dict__.keys():
+                p.__dict__[key] = None
+                p.__dict__['_raw'][key.decode('utf8')] = None
+    return papers
+  
 def get_papers(author, max_papers=None):
     """
     Returns a list of all the papers from author that contain at least one citation.
@@ -104,10 +112,7 @@ def get_papers(author, max_papers=None):
         papers = None
     papers = [p for p in papers if p.citation_count > 0][0:max_papers]
     # The following to resolve a bug in ads when Volume is undefined. Will be removed when ads update.
-    for ppp in papers:
-        if "volume" not in ppp.__dict__.keys():
-            ppp.__dict__['volume'] = None
-            ppp.__dict__['_raw'][u'volume'] = None
+    papers = set_to_None(papers)
     print('Got {} papers from {} with at least one citation'.format(len(papers), author))
     return papers
 
@@ -127,11 +132,7 @@ def get_citations(papers):
                                       max_pages=MAX_pages)
                 citas = list(res)
                 # The following to resolve a bug in ads when Volume is undefined. Will be removed when ads update.
-                for ppp in citas:
-                    if "volume" not in ppp.__dict__.keys():
-                        ppp.__dict__['volume'] = None
-                        ppp.__dict__['_raw'][u'volume'] = None
-                citations[p.bibcode] = citas
+                citations[p.bibcode] = set_to_None(citas)
                 print('Got {} citations for paper {}.'.format(N_citations, p.bibcode))
     return citations
 
