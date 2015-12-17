@@ -128,8 +128,8 @@ def print_results(author, papers, citations, filename=None):
     """
     Print the results on the screen and in a file.
     """
-    token = ads.config.token # store the token
-    ads.config.token = '' # we don't need to connect to ads in this function (but it we allow it, it will...)
+    #token = ads.config.token # store the token
+    #ads.config.token = '' # we don't need to connect to ads in this function (but it we allow it, it will...)
     if filename is None:
         def myprint(str):
             print(str)
@@ -187,7 +187,7 @@ def print_results(author, papers, citations, filename=None):
     myprint('\\end{document}')
     if filename is not None and type(filename) is not file:
         f.close()
-    ads.config.token = token # redefine the token as it was when entering
+    #ads.config.token = token # redefine the token as it was when entering
 
 def do_all(author, max_papers=None, no_screen=False, no_file=False):
     """
