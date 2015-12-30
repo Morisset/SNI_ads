@@ -12,7 +12,7 @@ import requests.packages.urllib3
 from unidecode import unidecode as uni
 import argparse
 
-__version__ = "5.1"
+__version__ = "5.2"
 
 if ads.__version__ == '0.11.2':
     print ('ads version is {}. You must update ads to at least v0.11.3 to use this version of SNI_ads'.format(ads.__version__))
@@ -225,12 +225,12 @@ def do_all(author, max_papers=None, no_screen=False, no_file=False, token=None):
         
 """
 # The following is used if you want to have access to the intermediate results. Otherwise, use the command-line way.
-import ads
 import SNI_ads
-ads.config.token = "5KAUJBW123456789dHCzvJWn73WyKVvNvyugC87M" # this one is fake, you need to use your own token
+token = "5KAUJBW123456789dHCzvJWn73WyKVvNvyugC87M" # this one is fake, you need to use your own token
+# token=None # use this is you defined the token using the ADS_DEV_KEY environment variable
 author = 'Morisset, C.'             
-articulos = SNI_ads.get_papers(author)
-citas = SNI_ads.get_citations(articulos)
+articulos = SNI_ads.get_papers(author, token=token)
+citas = SNI_ads.get_citations(articulos, token=token)
 SNI_ads.print_results(author, articulos, citas)
 f = open('refs_{}.tex'.format(SNI_ads.clean_author(author)), 'w')
 SNI_ads.print_results(author, articulos, citas, f)

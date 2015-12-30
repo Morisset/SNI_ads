@@ -1,8 +1,8 @@
 **WARNING: este programa genera un fichero que TIENES QUE VERIFICAR, porque puede ser que aun tiene errores, por ejemplo:**
 * hay varias maneras de codificar los acentos, que no son todas compatibles.
-* a veces aparece dos veces el mismo articulo en la lista de citas: uno de ArXiv, otro de la revista "real". Hay que quitar el ArXiv...
+* puede aparecer dos veces el mismo articulo en la lista de citas: uno de ArXiv, otro de la revista "real". Hay que quitar el ArXiv...
 
-**UPDATE: Versión 4.x es mucho mas eficiente y no deberia tener problemas con el limite de numero de conexiones.**
+**UPDATE: Versión 5.x es mucho mas eficiente y no deberia tener problemas con el limite de numero de conexiones. Pero se requiere ads version 0.11.3 (30 dec. 2015), tienes que hacer el update si no es el caso.**
 
 Este programa esta hecho para generar el documento que CONACyT pide para los investigadores que renovan o entran en el SNI. En particular lo siguiente:
 
@@ -20,10 +20,10 @@ https://ui.adsabs.harvard.edu/#user/settings/token
 . Hay que recuperar una clave de este tipo:
 "5K123456789HCzvJWn7312345678987M"
 
-Otro paso antes de correr el programa es la instalación de la librarya python "ads".
-Supongo que tienen una distribución de python en buen estado, con el programa de manejo de paquetes. En este caso, solo hacer:
+Otro paso antes de correr el programa es la instalación de la librarya python "ads". Se requiere la mas reciente versión (0.11.3, del 30 de dic. de 2015).
+Supongo que tienen una distribución de python en buen estado, con el programa de manejo de paquetes. En este caso, solo hacer (para instalar o hacer el update):
 
-`pip install ads`
+`pip install -U ads`
 
 Puede ser que necesiten tambien unidecode (si ya lo tienen, lo siguiente no va hacer daños):
 
@@ -37,7 +37,7 @@ NEW in version 4.x: Hay que guardarlo donde quieren, cambiar los derechos para q
 
 `SNI_ads.py 'Morisset, Christophe' -t "5K123456789HCzvJWn7312345678987M"`
 
-donde se da el nombre del author (mejor poner en nombre y el apelido) que buscas y el token que has recuperado del sitio ADS.
+donde se da el nombre del author (mejor poner en nombre y el apelido) que buscas y el token que has recuperado del sitio ADS (el que esta en este ejemplo NO funciona).
 
 Deberia resultar en un fichero LaTex de nombre en este caso "refs_MorissetChristophe.tex" , de lo cual se genera un PDF bonito. 
 
