@@ -12,7 +12,21 @@ import requests.packages.urllib3
 from unidecode import unidecode as uni
 import argparse
 
-__version__ = "4.4"
+__version__ = "5.1"
+
+if ads.__version__ == '0.11.2':
+    print ('ads version is {}. You must update ads to at least v0.11.3 to use this version of SNI_ads'.format(ads.__version__))
+    def set_to_None(papers):
+        # The following to resolve a bug in ads v 0.11.2 when Volume is undefined.
+        for p in papers:
+            for key in ('title', 'year', 'pub', 'volume', 'page'):
+                if key not in p.__dict__.keys():
+                    p.__dict__[key] = None
+                    p.__dict__['_raw'][key.decode('utf8')] = None
+        return papers
+else:
+    def set_to_None(papers):
+        return papers
 
 requests.packages.urllib3.disable_warnings()
 MAX_pages = 1000
@@ -86,15 +100,8 @@ def pretty_ref(p, with_title=False):
         
     return('{}{}{}{}{}{}'.format(auts(p), year, title, pub, volume, page))
          
-def set_to_None(papers):
-    for p in papers:
-        for key in ('title', 'year', 'pub', 'volume', 'page'):
-            if key not in p.__dict__.keys():
-                p.__dict__[key] = None
-                p.__dict__['_raw'][key.decode('utf8')] = None
-    return papers
   
-def get_papers(author, max_papers=None):
+def get_papers(author, max_papers=None, token=None):
     """
     Returns a list of all the papers from author that contain at least one citation.
     max_paper can reduce the number of papers. The default is MAX_papers (1000000)
@@ -105,18 +112,18 @@ def get_papers(author, max_papers=None):
         max_papers = MAX_papers
     res = ads.SearchQuery(author=author, 
                           fl='author, title, year, pub, volume, page, citation, citation_count, bibcode',
-                          max_pages=MAX_pages)
+                          max_pages=MAX_pages,
+                          token=token)
     try:
         papers = list(res)
     except:
         papers = None
     papers = [p for p in papers if p.citation_count > 0][0:max_papers]
-    # The following to resolve a bug in ads when Volume is undefined. Will be removed when ads update.
     papers = set_to_None(papers)
     print('Got {} papers from {} with at least one citation'.format(len(papers), author))
     return papers
 
-def get_citations(papers):
+def get_citations(papers, token=None):
     """
     papers: list of ads.search.Article
     Returns a dictionnary where each key corresponds to the bibcode of one element of papers and the value is a list of 
@@ -129,7 +136,8 @@ def get_citations(papers):
             if N_citations > 0:
                 res = ads.SearchQuery(q='citations(bibcode:{})'.format(p.bibcode), 
                                       fl='author, title, year, pub, volume, page, bibcode',
-                                      max_pages=MAX_pages)
+                                      max_pages=MAX_pages,
+                                      token=token)
                 citas = list(res)
                 # The following to resolve a bug in ads when Volume is undefined. Will be removed when ads update.
                 citations[p.bibcode] = set_to_None(citas)
@@ -198,13 +206,13 @@ def print_results(author, papers, citations, filename=None):
     if filename is not None and type(filename) is not file:
         f.close()
 
-def do_all(author, max_papers=None, no_screen=False, no_file=False):
+def do_all(author, max_papers=None, no_screen=False, no_file=False, token=None):
     """
     Run the different part of the program to directly obtain 
     """
-    articulos = get_papers(author, max_papers=max_papers)
+    articulos = get_papers(author, max_papers=max_papers, token=token)
     if articulos is not None and len(articulos) != 0:
-        citas = get_citations(articulos)
+        citas = get_citations(articulos, token=token)
         if not no_screen:
             print_results(author, articulos, citas)
         if not no_file:
@@ -232,7 +240,7 @@ f.close()
 if __name__ == '__main__':            
     parser = argparse.ArgumentParser()
     parser.add_argument("author", help="Author to search for.")
-    parser.add_argument("-t", "--token", help="ADS token. Unused if the environment variable ADS_DEV_KEY is defined.")
+    parser.add_argument("-t", "--token", help="ADS token.")
     parser.add_argument("-m", "--max_papers", help="Maximum number of papers to consider.", type=int)
     parser.add_argument("-ns", "--no_screen", help="No screen output.", action="store_true")
     parser.add_argument("-nf", "--no_file", help="No file output.", action="store_true")
@@ -240,9 +248,7 @@ if __name__ == '__main__':
                         help="Display version information and exit.")
     args = parser.parse_args()
     author = args.author
-    if args.token is not None:
-        ads.config.token = args.token
-    do_all(author, max_papers=args.max_papers, no_screen=args.no_screen, no_file=args.no_file)
+    do_all(author, max_papers=args.max_papers, no_screen=args.no_screen, no_file=args.no_file, token=args.token)
     
     
     
