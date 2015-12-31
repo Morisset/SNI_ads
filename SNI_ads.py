@@ -13,7 +13,7 @@ from unidecode import unidecode as uni
 import argparse
 from distutils.version import LooseVersion
 
-__version__ = "5.3"
+__version__ = "5.4"
 
 if LooseVersion(ads.__version__) < LooseVersion('0.11.3'):
     raise Exception('ads version is {}. You must update ads to at least v0.11.3 to use this version of SNI_ads. Use "pip install -U ads"'.format(ads.__version__))
