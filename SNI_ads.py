@@ -11,10 +11,11 @@ import ads
 import requests.packages.urllib3
 from unidecode import unidecode as uni
 import argparse
+from distutils.version import LooseVersion
 
 __version__ = "5.3"
 
-if ads.__version__ == '0.11.2':
+if LooseVersion(ads.__version__) < LooseVersion('0.11.3'):
     raise Exception('ads version is {}. You must update ads to at least v0.11.3 to use this version of SNI_ads. Use "pip install -U ads"'.format(ads.__version__))
 
 requests.packages.urllib3.disable_warnings()
