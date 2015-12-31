@@ -106,10 +106,11 @@ def get_papers(author, max_papers=None, token=None):
                           token=token)
     try:
         papers = list(res)
+        papers = [p for p in papers if p.citation_count > 0][0:max_papers]
+        print('Got {} papers from {} with at least one citation'.format(len(papers), author))
     except:
         papers = None
-    papers = [p for p in papers if p.citation_count > 0][0:max_papers]
-    print('Got {} papers from {} with at least one citation'.format(len(papers), author))
+        print('Got 0 papers from {} with at least one citation'.format(author))
     return papers
 
 def get_citations(papers, token=None):
