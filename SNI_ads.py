@@ -17,18 +17,6 @@ __version__ = "5.3"
 if ads.__version__ == '0.11.2':
     raise Exception('ads version is {}. You must update ads to at least v0.11.3 to use this version of SNI_ads. Use "pip install -U ads"'.format(ads.__version__))
 
-#     def set_to_None(papers):
-#         # The following to resolve a bug in ads v 0.11.2 when Volume is undefined.
-#         for p in papers:
-#             for key in ('title', 'year', 'pub', 'volume', 'page'):
-#                 if key not in p.__dict__.keys():
-#                     p.__dict__[key] = None
-#                     p.__dict__['_raw'][key.decode('utf8')] = None
-#         return papers
-else:
-    def set_to_None(papers):
-        return papers
-
 requests.packages.urllib3.disable_warnings()
 MAX_pages = 1000
 MAX_papers = 1000000
@@ -120,7 +108,6 @@ def get_papers(author, max_papers=None, token=None):
     except:
         papers = None
     papers = [p for p in papers if p.citation_count > 0][0:max_papers]
-    papers = set_to_None(papers)
     print('Got {} papers from {} with at least one citation'.format(len(papers), author))
     return papers
 
@@ -139,9 +126,7 @@ def get_citations(papers, token=None):
                                       fl='author, title, year, pub, volume, page, bibcode',
                                       max_pages=MAX_pages,
                                       token=token)
-                citas = list(res)
-                # The following to resolve a bug in ads when Volume is undefined. Will be removed when ads update.
-                citations[p.bibcode] = set_to_None(citas)
+                citations[p.bibcode] = list(res)
                 print('Got {} citations for paper {}.'.format(N_citations, p.bibcode))
     return citations
 
