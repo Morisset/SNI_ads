@@ -12,18 +12,19 @@ import requests.packages.urllib3
 from unidecode import unidecode as uni
 import argparse
 
-__version__ = "5.2"
+__version__ = "5.3"
 
 if ads.__version__ == '0.11.2':
-    print ('ads version is {}. You must update ads to at least v0.11.3 to use this version of SNI_ads'.format(ads.__version__))
-    def set_to_None(papers):
-        # The following to resolve a bug in ads v 0.11.2 when Volume is undefined.
-        for p in papers:
-            for key in ('title', 'year', 'pub', 'volume', 'page'):
-                if key not in p.__dict__.keys():
-                    p.__dict__[key] = None
-                    p.__dict__['_raw'][key.decode('utf8')] = None
-        return papers
+    raise Exception('ads version is {}. You must update ads to at least v0.11.3 to use this version of SNI_ads. Use "pip install -U ads"'.format(ads.__version__))
+
+#     def set_to_None(papers):
+#         # The following to resolve a bug in ads v 0.11.2 when Volume is undefined.
+#         for p in papers:
+#             for key in ('title', 'year', 'pub', 'volume', 'page'):
+#                 if key not in p.__dict__.keys():
+#                     p.__dict__[key] = None
+#                     p.__dict__['_raw'][key.decode('utf8')] = None
+#         return papers
 else:
     def set_to_None(papers):
         return papers
@@ -83,7 +84,7 @@ def pretty_ref(p, with_title=False):
         pub = ''
     try:
         volume = ', {}'.format(cv(p.volume))
-        #volume=''
+        #volume='' 
     except:
         volume = ''
     try:
