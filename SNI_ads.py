@@ -7,13 +7,14 @@ Created on 14 dec. 2015
 '''
 
 
+#from __future__ import unicode_literals
 import ads
 import requests.packages.urllib3
-from unidecode import unidecode as uni
+from unidecode import unidecode
 import argparse
 from distutils.version import LooseVersion
 
-__version__ = "6.2"
+__version__ = "6.3"
 
 if LooseVersion(ads.__version__) < LooseVersion('0.11.3'):
     raise Exception('ads version is {}. You must update ads to at least v0.11.3 to use this version of SNI_ads. Use "pip install -U ads"'.format(ads.__version__))
@@ -23,7 +24,8 @@ MAX_pages = 1000
 MAX_papers = 1000000
 
 #cv = lambda str: unicode(str).encode('utf8')
-cv = lambda str: uni(str).replace('$', '').replace('#', '').replace('&', '').replace('_', '\_')
+#cv = lambda str: unidecode(str).replace('$', '').replace('#', '').replace('&', '').replace('_', '\_')    
+cv = lambda str: unidecode(str).translate(None, '$#&').replace('_', '\_')    
     
 clean_author = lambda author: ''.join([s for s in author if s not in ('.', ' ', ',')])
 
@@ -53,7 +55,7 @@ def pretty_author_name(authors):
             res2 = ''
         return  "{}, {}.".format(cv(res1), cv(res2) )
     else:
-        return authors
+        return cv(authors)
 
 def auts(p):
     """
@@ -83,7 +85,6 @@ def pretty_ref(p, with_title=False):
         pub = ''
     try:
         volume = ', {}'.format(cv(p.volume))
-        #volume='' 
     except:
         volume = ''
     try:
@@ -100,7 +101,25 @@ def pretty_ref(p, with_title=False):
         
     return('{}{}{}{}{}{}'.format(auts(p), year, title, pub, volume, page))
          
-  
+def clean_arXiv(papers):
+    """
+    Take a list of papers and return the same list without the arXiv doblets
+    """
+    res = []
+    for p in papers:
+        keep_it = True
+        if p.pub == 'ArXiv e-prints':
+            for p2 in papers:
+                #if auts(p) == auts(p2) and p2.pub != 'ArXiv e-prints':
+                #    print('!!!!!!-1-  {} '.format(cv(p.title[0])))
+                #    print('!!!!!!-2-  {} '.format(cv(p2.title[0])))
+                if cv(p.title[0]) == cv(p2.title[0]) and auts(p) == auts(p2) and p2.pub != 'ArXiv e-prints':
+                    keep_it = False
+                    print('Removing {}'.format(p.title)) 
+        if keep_it:
+            res.append(p)
+    return res    
+
 def get_papers(author, max_papers=None, token=None, ex_file=None, in_file=None):
     """
     Returns a list of all the papers from author that contain at least one citation.
@@ -156,7 +175,7 @@ def get_citations(papers, token=None):
                                       fl='author, title, year, pub, volume, page, bibcode',
                                       max_pages=MAX_pages,
                                       token=token)
-                citations[p.bibcode] = list(res)
+                citations[p.bibcode] = clean_arXiv(list(res))
                 print('Got {} citations for paper {}.'.format(N_citations, p.bibcode))
     return citations
 
@@ -193,9 +212,9 @@ def print_results(author, papers, citations, filename=None):
                 autocite = False
                 autociteco = False
                 for this_author in citing.author:
-                    if uni(pretty_author_name(this_author)) == uni(pretty_author_name(author)):
+                    if pretty_author_name(this_author) == pretty_author_name(author):
                         autocite = True
-                    elif uni(pretty_author_name(this_author)) in [uni(a) for a in authors]:
+                    elif pretty_author_name(this_author) in [cv(a) for a in authors]:
                         autociteco = True
                 if autocite:
                     typeC.append(citing)
@@ -206,10 +225,13 @@ def print_results(author, papers, citations, filename=None):
             total_typeA += len(typeA)
             total_typeB += len(typeB)
             total_typeC += len(typeC)
+            this_count = len(typeA) + len(typeB) + len(typeC)
             if len(typeA) + len(typeB) > 0:
-                myprint('\\item {} \\\ Total = {}, Type A = {}, type B = {}, type C = {} \\\ '.format(pretty_ref(p, with_title=True), 
-                                                                                                     p.citation_count,
-                                                                                                     len(typeA), len(typeB), len(typeC)))
+                myprint('\\item {} \\\ '.format(pretty_ref(p, with_title=True)))
+                myprint('Total = {}, Type A = {}, type B = {}, type C = {} \\\ '.format(this_count,
+                                                                                        len(typeA), 
+                                                                                        len(typeB), 
+                                                                                        len(typeC)))
                 if len(typeA) > 0:
                     myprint('{\\bf Citations Type A:}')
                     myprint('\\begin{itemize}')
@@ -232,7 +254,7 @@ def print_results(author, papers, citations, filename=None):
 def do_all(author, max_papers=None, no_screen=False, no_file=False, 
            token=None, ex_file=None, in_file=None):
     """
-    Run the different part of the program to directly obtain 
+    Run the different part of the program to directly obtain the LaTex file
     """
     articulos = get_papers(author, max_papers=max_papers, 
                            token=token, ex_file=ex_file, in_file=in_file)
