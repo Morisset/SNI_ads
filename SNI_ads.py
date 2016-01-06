@@ -258,7 +258,7 @@ f.close()
 
 if __name__ == '__main__':            
     parser = argparse.ArgumentParser()
-    parser.add_argument("author", help="Author to search for.")
+    parser.add_argument("author", help="Author to search for.", default='', nargs='?')
     parser.add_argument("-t", "--token", help="ADS token. It can also be stored in ADS_DEV_KEY environment variable.")
     parser.add_argument("-m", "--max_papers", help="Maximum number of papers to consider.", type=int)
     parser.add_argument("-ns", "--no_screen", help="No screen output.", action="store_true")
@@ -268,8 +268,9 @@ if __name__ == '__main__':
     parser.add_argument("-ex", "--exclude_bibcodes", help="A filename containing the bibcode to be excluded")
     parser.add_argument("-in", "--include_bibcodes", help="A filename containing the bibcode to be included. In this case, the Authot is not used")
     args = parser.parse_args()
-    author = args.author
-    do_all(author, max_papers=args.max_papers, no_screen=args.no_screen, no_file=args.no_file, 
+    if args.author == '' and args.include_bibcodes is None:
+        raise ValueError('at least an author name or an include file must be given')
+    do_all(args.author, max_papers=args.max_papers, no_screen=args.no_screen, no_file=args.no_file, 
            token=args.token, ex_file = args.exclude_bibcodes, in_file=args.include_bibcodes)
     
     
