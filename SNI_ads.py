@@ -33,7 +33,7 @@ def read_bibcode_file(filename):
     with open(filename, 'r') as datafile:
         for row in datafile:
             if row[0] != "#" and row[0] != "\n":
-                res.append(row.strip().translate(None, '[').translate(None, ']').translate(None, '(').translate(None, ')'))
+                res.append(row.strip().translate(None, '[](){}'))
     return res
     
 
