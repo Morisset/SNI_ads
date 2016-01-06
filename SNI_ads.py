@@ -12,8 +12,9 @@ import requests.packages.urllib3
 from unidecode import unidecode as uni
 import argparse
 from distutils.version import LooseVersion
+import numpy as np
 
-__version__ = "5.4"
+__version__ = "6.1"
 
 if LooseVersion(ads.__version__) < LooseVersion('0.11.3'):
     raise Exception('ads version is {}. You must update ads to at least v0.11.3 to use this version of SNI_ads. Use "pip install -U ads"'.format(ads.__version__))
@@ -26,6 +27,16 @@ MAX_papers = 1000000
 cv = lambda str: uni(str).replace('$', '').replace('#', '').replace('&', '').replace('_', '\_')
     
 clean_author = lambda author: ''.join([s for s in author if s not in ('.', ' ', ',')])
+
+def read_bibcode_file(filename):
+    
+    res = []
+    with open(filename, 'r') as datafile:
+        for row in datafile:
+            if row[0] != "#" and row[0] != "\n":
+                res.append(row.strip().translate(None, '[').translate(None, ']').translate(None, '(').translate(None, ')'))
+    return res
+    
 
 def pretty_author_name(authors):
     """
@@ -91,7 +102,7 @@ def pretty_ref(p, with_title=False):
     return('{}{}{}{}{}{}'.format(auts(p), year, title, pub, volume, page))
          
   
-def get_papers(author, max_papers=None, token=None):
+def get_papers(author, max_papers=None, token=None, ex_file=None, in_file=None):
     """
     Returns a list of all the papers from author that contain at least one citation.
     max_paper can reduce the number of papers. The default is MAX_papers (1000000)
@@ -100,17 +111,35 @@ def get_papers(author, max_papers=None, token=None):
     """
     if max_papers is None:
         max_papers = MAX_papers
-    res = ads.SearchQuery(author=author, 
+    if in_file is not None:
+        in_bibcodes = read_bibcode_file(in_file)
+        papers = []
+        for bibcode in in_bibcodes:
+            res =  ads.SearchQuery(bibcode=bibcode, 
+                                   fl='author, title, year, pub, volume, page, citation, citation_count, bibcode',
+                                   max_pages=MAX_pages,
+                                   token=token)
+            
+            papers.extend(list(res))
+    else:
+        res = ads.SearchQuery(author=author, 
                           fl='author, title, year, pub, volume, page, citation, citation_count, bibcode',
                           max_pages=MAX_pages,
                           token=token)
+        try:
+            papers = list(res)
+        except:
+            papers = None
     try:
-        papers = list(res)
         papers = [p for p in papers if p.citation_count > 0][0:max_papers]
-        print('Got {} papers from {} with at least one citation'.format(len(papers), author))
     except:
         papers = None
         print('Got 0 papers from {} with at least one citation'.format(author))
+        return papers
+    if ex_file is not None:
+        ex_bibcodes = read_bibcode_file(ex_file)
+        papers = [p for p in papers if p.bibcode not in ex_bibcodes]
+    print('Got {} papers from {} with at least one citation'.format(len(papers), author))
     return papers
 
 def get_citations(papers, token=None):
@@ -194,11 +223,13 @@ def print_results(author, papers, citations, filename=None):
     if filename is not None and type(filename) is not file:
         f.close()
 
-def do_all(author, max_papers=None, no_screen=False, no_file=False, token=None):
+def do_all(author, max_papers=None, no_screen=False, no_file=False, 
+           token=None, ex_file=None, in_file=None):
     """
     Run the different part of the program to directly obtain 
     """
-    articulos = get_papers(author, max_papers=max_papers, token=token)
+    articulos = get_papers(author, max_papers=max_papers, 
+                           token=token, ex_file=ex_file, in_file=in_file)
     if articulos is not None and len(articulos) != 0:
         citas = get_citations(articulos, token=token)
         if not no_screen:
@@ -234,9 +265,12 @@ if __name__ == '__main__':
     parser.add_argument("-nf", "--no_file", help="No file output.", action="store_true")
     parser.add_argument("-V", "--version", action="version", version=__version__,
                         help="Display version information and exit.")
+    parser.add_argument("-ex", "--exclude_bibcodes", help="A filename containing the bibcode to be excluded")
+    parser.add_argument("-in", "--include_bibcodes", help="A filename containing the bibcode to be included. In this case, the Authot is not used")
     args = parser.parse_args()
     author = args.author
-    do_all(author, max_papers=args.max_papers, no_screen=args.no_screen, no_file=args.no_file, token=args.token)
+    do_all(author, max_papers=args.max_papers, no_screen=args.no_screen, no_file=args.no_file, 
+           token=args.token, ex_file = args.exclude_bibcodes, in_file=args.include_bibcodes)
     
     
     
