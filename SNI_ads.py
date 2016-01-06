@@ -13,7 +13,7 @@ from unidecode import unidecode as uni
 import argparse
 from distutils.version import LooseVersion
 
-__version__ = "6.1"
+__version__ = "6.2"
 
 if LooseVersion(ads.__version__) < LooseVersion('0.11.3'):
     raise Exception('ads version is {}. You must update ads to at least v0.11.3 to use this version of SNI_ads. Use "pip install -U ads"'.format(ads.__version__))
@@ -113,7 +113,7 @@ def get_papers(author, max_papers=None, token=None, ex_file=None, in_file=None):
     if in_file is not None:
         in_bibcodes = read_bibcode_file(in_file)
         papers = []
-        for bibcode in in_bibcodes:
+        for bibcode in in_bibcodes[0:max_papers]:
             res =  ads.SearchQuery(bibcode=bibcode, 
                                    fl='author, title, year, pub, volume, page, citation, citation_count, bibcode',
                                    max_pages=MAX_pages,
@@ -179,6 +179,9 @@ def print_results(author, papers, citations, filename=None):
     myprint('\\documentclass{letter}')
     myprint('\\begin{document}')
     myprint('\\begin{enumerate}')
+    total_typeA = 0
+    total_typeB = 0
+    total_typeC = 0
     for p in sorted(papers , key=lambda pp: (pp.year, pp.author[0])):
         typeA = [] # no autocitas
         typeB = [] # autocitas por coauthor
@@ -200,6 +203,9 @@ def print_results(author, papers, citations, filename=None):
                     typeB.append(citing)
                 else:
                     typeA.append(citing)
+            total_typeA += len(typeA)
+            total_typeB += len(typeB)
+            total_typeC += len(typeC)
             if len(typeA) + len(typeB) > 0:
                 myprint('\\item {} \\\ Total = {}, Type A = {}, type B = {}, type C = {} \\\ '.format(pretty_ref(p, with_title=True), 
                                                                                                      p.citation_count,
@@ -218,6 +224,7 @@ def print_results(author, papers, citations, filename=None):
                     myprint('\\end{itemize}')
                 myprint('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%')
     myprint('\\end{enumerate}')
+    myprint('TOTAL type A = {}, type B = {}, type C = {}'.format(total_typeA, total_typeB, total_typeC))
     myprint('\\end{document}')
     if filename is not None and type(filename) is not file:
         f.close()
