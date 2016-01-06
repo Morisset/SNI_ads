@@ -271,8 +271,8 @@ if __name__ == '__main__':
     parser.add_argument("-nf", "--no_file", help="No file output.", action="store_true")
     parser.add_argument("-V", "--version", action="version", version=__version__,
                         help="Display version information and exit.")
-    parser.add_argument("-ex", "--exclude_bibcodes", help="A filename containing the bibcode to be excluded")
-    parser.add_argument("-in", "--include_bibcodes", help="A filename containing the bibcode to be included. In this case, the Authot is not used")
+    parser.add_argument("-ex", "--exclude_bibcodes", help="A filename containing the bibcodes to be excluded")
+    parser.add_argument("-in", "--include_bibcodes", help="A filename containing the bibcodes to be included. In this case, the author may be omitted")
     args = parser.parse_args()
     if args.author == '' and args.include_bibcodes is None:
         raise ValueError('at least an author name or an include file must be given')
