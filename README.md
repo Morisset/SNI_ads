@@ -56,7 +56,7 @@ Si tienes un nombre bastane comun pero que tienes ya una lista de los bibcodes q
 
 puedes usar:
 
-`SNI_ads.py 'Morisset, Christophe' -t "5K123456789HCzvJWn7312345678987M" -in in_refs.dat` 
+`SNI_ads.py  -t "5K123456789HCzvJWn7312345678987M" -in in_refs.dat` 
 
 Deberia resultar en un fichero LaTex de nombre en este caso "refs_MorissetChristophe.tex" , de lo cual se genera un PDF bonito. 
 
