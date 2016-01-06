@@ -12,7 +12,6 @@ import requests.packages.urllib3
 from unidecode import unidecode as uni
 import argparse
 from distutils.version import LooseVersion
-import numpy as np
 
 __version__ = "6.1"
 

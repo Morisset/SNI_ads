@@ -5,3 +5,5 @@ refs_*
 ADS_tokens.txt
 
 *.pyc
+
+*.dat
