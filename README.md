@@ -39,6 +39,8 @@ NEW in version 4.x: Hay que guardarlo donde quieren, cambiar los derechos para q
 
 donde se da el nombre del author (mejor poner en nombre y el apelido) que buscas y el token que has recuperado del sitio ADS (el que esta en este ejemplo NO funciona).
 
+Deberia resultar en un fichero LaTex de nombre en este caso "refs_MorissetChristophe.tex" , de lo cual se genera un PDF bonito. 
+
 Si tienes un nombre bastane comun pero que tienes ya una lista de los bibcodes que coresponden a tus articulos en un fichero por ejemplo nombrado in_refs.dat de este tipo (puede ser que los [] sean (), no importa):
 ```
 [2016A&A...585A..69G] 
@@ -58,5 +60,4 @@ puedes usar:
 
 `SNI_ads.py  -t "5K123456789HCzvJWn7312345678987M" -in in_refs.dat` 
 
-Deberia resultar en un fichero LaTex de nombre en este caso "refs_MorissetChristophe.tex" , de lo cual se genera un PDF bonito. 
-
+En este caso el fichero resultante es refs_.dat (si metes un autor, se usa por lo menos para nombrar el fichero de salida).
