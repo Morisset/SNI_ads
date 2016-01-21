@@ -211,17 +211,20 @@ def print_results(author, papers, citations, filename=None):
             for citing in citations[p.bibcode]:
                 autocite = False
                 autociteco = False
-                for this_author in citing.author:
-                    if pretty_author_name(this_author) == pretty_author_name(author):
-                        autocite = True
-                    elif pretty_author_name(this_author) in [cv(a) for a in authors]:
-                        autociteco = True
-                if autocite:
-                    typeC.append(citing)
-                elif autociteco:
-                    typeB.append(citing)
-                else:
-                    typeA.append(citing)
+                try:
+                    for this_author in citing.author:
+                        if pretty_author_name(this_author) == pretty_author_name(author):
+                            autocite = True
+                        elif pretty_author_name(this_author) in [cv(a) for a in authors]:
+                            autociteco = True
+                    if autocite:
+                        typeC.append(citing)
+                    elif autociteco:
+                        typeB.append(citing)
+                    else:
+                        typeA.append(citing)
+                except:
+                    pass
             total_typeA += len(typeA)
             total_typeB += len(typeB)
             total_typeC += len(typeC)
