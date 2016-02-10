@@ -249,7 +249,8 @@ def print_results(author, papers, citations, filename=None):
                     myprint('\\end{itemize}')
                 myprint('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%')
     myprint('\\end{enumerate}')
-    myprint('TOTAL type A = {}, type B = {}, type C = {}'.format(total_typeA, total_typeB, total_typeC))
+    totall= total_typeA, +total_typeB + total_typeC
+    myprint('TOTAL {} type A = {}, type B = {}, type C = {}'.format(totall, total_typeA, total_typeB, total_typeC))
     myprint('\\end{document}')
     if filename is not None and type(filename) is not file:
         f.close()
@@ -289,7 +290,7 @@ f.close()
 
 if __name__ == '__main__':            
     parser = argparse.ArgumentParser()
-    parser.add_argument("author", help="Author to search for.", default='', nargs='?')
+    parser.add_argument("author", help="Author to search for.", default='')
     parser.add_argument("-t", "--token", help="ADS token. It can also be stored in ADS_DEV_KEY environment variable.")
     parser.add_argument("-m", "--max_papers", help="Maximum number of papers to consider.", type=int)
     parser.add_argument("-ns", "--no_screen", help="No screen output.", action="store_true")
