@@ -1,3 +1,7 @@
+Este programa funciona en python 2.N
+Estoy trabajando en la versión 3.N...
+
+
 **WARNING: este programa genera un fichero que TIENES QUE VERIFICAR, porque puede ser que aun tiene errores, por ejemplo:**
 * hay varias maneras de codificar los acentos, que no son todas compatibles.
 * puede aparecer dos veces el mismo articulo en la lista de citas: uno de ArXiv, otro de la revista "real". Hay que quitar el ArXiv...
