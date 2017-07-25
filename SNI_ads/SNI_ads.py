@@ -13,8 +13,7 @@ import requests.packages.urllib3
 from unidecode import unidecode
 import argparse
 from distutils.version import LooseVersion
-
-__version__ = "6.4"
+from .version import version
 
 if LooseVersion(ads.__version__) < LooseVersion('0.11.3'):
     raise Exception('ads version is {}. You must update ads to at least v0.11.3 to use this version of SNI_ads. Use "pip install -U ads"'.format(ads.__version__))
@@ -295,7 +294,7 @@ if __name__ == '__main__':
     parser.add_argument("-m", "--max_papers", help="Maximum number of papers to consider.", type=int)
     parser.add_argument("-ns", "--no_screen", help="No screen output.", action="store_true")
     parser.add_argument("-nf", "--no_file", help="No file output.", action="store_true")
-    parser.add_argument("-V", "--version", action="version", version=__version__,
+    parser.add_argument("-V", "--version", action="version", version=version,
                         help="Display version information and exit.")
     parser.add_argument("-ex", "--exclude_bibcodes", help="A filename containing the bibcodes to be excluded")
     parser.add_argument("-in", "--include_bibcodes", help="A filename containing the bibcodes to be included. In this case, the author may be omitted")

@@ -2,6 +2,9 @@
 * hay varias maneras de codificar los acentos, que no son todas compatibles.
 * puede aparecer dos veces el mismo articulo en la lista de citas: uno de ArXiv, otro de la revista "real". Hay que quitar el ArXiv...
 
+**UPDATE: Version 7.x: instalado con:
+pip install -U git+https://github.com/Morisset/SNI_ads.git
+
 **UPDATE: Versión 5.x es mucho mas eficiente y no deberia tener problemas con el limite de numero de conexiones. Pero se requiere ads version 0.11.3 (30 dec. 2015), tienes que hacer el update si no es el caso.**
 
 Este programa esta hecho para generar el documento que CONACyT pide para los investigadores que renovan o entran en el SNI. En particular lo siguiente:
@@ -31,11 +34,8 @@ Puede ser que necesiten tambien unidecode (si ya lo tienen, lo siguiente no va h
 
 Et voilà!
 
-Ya pueden descargar el programa que hice desde aca: https://github.com/Morisset/SNI_ads/raw/master/SNI_ads.py
 
-NEW in version 4.x: Hay que guardarlo donde quieren, cambiar los derechos para que sea un ejecutable (chmod a+x SNI_ads.py) y ejecutar desde el directorio donde esta guardado:
-
-`SNI_ads.py 'Morisset, Christophe' -t "5K123456789HCzvJWn7312345678987M"`
+`SNI_ads 'Morisset, Christophe' -t "5K123456789HCzvJWn7312345678987M"`
 
 donde se da el nombre del author (mejor poner en nombre y el apelido) que buscas y el token que has recuperado del sitio ADS (el que esta en este ejemplo NO funciona).
 
