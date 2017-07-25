@@ -287,7 +287,7 @@ SNI_ads.print_results(author, articulos, citas, f)
 f.close()
 """
 
-if __name__ == '__main__':            
+def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("author", help="Author to search for.", default='')
     parser.add_argument("-t", "--token", help="ADS token. It can also be stored in ADS_DEV_KEY environment variable.")
@@ -303,6 +303,8 @@ if __name__ == '__main__':
         raise ValueError('at least an author name or an include file must be given')
     do_all(args.author, max_papers=args.max_papers, no_screen=args.no_screen, no_file=args.no_file, 
            token=args.token, ex_file = args.exclude_bibcodes, in_file=args.include_bibcodes)
-    
+
+if __name__ == '__main__':            
+    main()
     
     
