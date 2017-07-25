@@ -12,7 +12,7 @@ Topic :: Engineering
 Operating System :: POSIX
 Operating System :: Unix
 """
-NAME = "SNI_ads"
+NAME = "SNIads"
 MAJOR = 7
 MINOR = 1
 ISRELEASED = True
@@ -42,7 +42,7 @@ write_version_py()
 setup(
     name=NAME,
     version=VERSION,
-    packages=['SNI_ads'],
+    packages=['SNIads'],
     author="Christophe Morisset",
     author_email="chris.morisset@gmail.com",
     license="LGPL",
