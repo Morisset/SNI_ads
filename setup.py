@@ -53,7 +53,7 @@ setup(
     platforms=["Linux", "Unix"],
     entry_points={
         'console_scripts': [
-            'SNI_ads = SNI_ads.SNI_ads:main'
+            'SNIads = SNIads.SNIads:main'
         ]
     }
 )
