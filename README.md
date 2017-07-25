@@ -39,7 +39,7 @@ Puede ser que necesiten tambien unidecode (si ya lo tienen, lo siguiente no va h
 Et voilà!
 
 
-`SNI_ads 'Morisset, Christophe' -t "5K123456789HCzvJWn7312345678987M"`
+`SNIads 'Morisset, Christophe' -t "5K123456789HCzvJWn7312345678987M"`
 
 donde se da el nombre del author (mejor poner en nombre y el apelido) que buscas y el token que has recuperado del sitio ADS (el que esta en este ejemplo NO funciona).
 
