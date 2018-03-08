@@ -119,7 +119,7 @@ def clean_arXiv(papers):
             res.append(p)
     return res    
 
-def get_papers(author, max_papers=None, token=None, ex_file=None, in_file=None):
+def get_papers(author, max_papers=None, token=None, ex_file=None, in_file=None, verbose=False):
     """
     Returns a list of all the papers from author that contain at least one citation.
     max_paper can reduce the number of papers. The default is MAX_papers (1000000)
@@ -132,6 +132,8 @@ def get_papers(author, max_papers=None, token=None, ex_file=None, in_file=None):
         in_bibcodes = read_bibcode_file(in_file)
         papers = []
         for bibcode in in_bibcodes[0:max_papers]:
+            if verbose:
+                print('get_papers for bibcode = {}'.format(bibcode))
             res =  ads.SearchQuery(bibcode=bibcode, 
                                    fl='author, title, year, pub, volume, page, citation, citation_count, bibcode',
                                    max_pages=MAX_pages,
@@ -159,7 +161,7 @@ def get_papers(author, max_papers=None, token=None, ex_file=None, in_file=None):
     print('Got {} papers from {} with at least one citation'.format(len(papers), author))
     return papers
 
-def get_citations(papers, token=None):
+def get_citations(papers, token=None, verbose=False):
     """
     papers: list of ads.search.Article
     Returns a dictionnary where each key corresponds to the bibcode of one element of papers and the value is a list of 
@@ -170,6 +172,8 @@ def get_citations(papers, token=None):
         for p in sorted(papers , key=lambda pp: (pp.year, pp.author[0])):
             N_citations = p.citation_count
             if N_citations > 0:
+                if verbose:
+                    print('get_citations for paper {}'.format(p.title))
                 res = ads.SearchQuery(q='citations(bibcode:{})'.format(p.bibcode), 
                                       fl='author, title, year, pub, volume, page, bibcode',
                                       max_pages=MAX_pages,
@@ -178,7 +182,7 @@ def get_citations(papers, token=None):
                 print('Got {} citations for paper {}.'.format(N_citations, p.bibcode))
     return citations
 
-def print_results(author, papers, citations, filename=None):
+def print_results(author, papers, citations, filename=None, verbose=False):
     """
     Print the results on the screen and in a file.
     """
@@ -212,6 +216,8 @@ def print_results(author, papers, citations, filename=None):
                 autociteco = False
                 try:
                     for this_author in citing.author:
+                        if verbose:
+                            print('print_results for paper {} and coauthor {}'.format(p.title, this_author))
                         if pretty_author_name(this_author) == pretty_author_name(author):
                             autocite = True
                         elif pretty_author_name(this_author) in [cv(a) for a in authors]:
@@ -255,16 +261,16 @@ def print_results(author, papers, citations, filename=None):
         f.close()
 
 def do_all(author, max_papers=None, no_screen=False, no_file=False, 
-           token=None, ex_file=None, in_file=None):
+           token=None, ex_file=None, in_file=None, verbose=None):
     """
     Run the different part of the program to directly obtain the LaTex file
     """
     articulos = get_papers(author, max_papers=max_papers, 
-                           token=token, ex_file=ex_file, in_file=in_file)
+                           token=token, ex_file=ex_file, in_file=in_file, verbose=verbose)
     if articulos is not None and len(articulos) != 0:
-        citas = get_citations(articulos, token=token)
+        citas = get_citations(articulos, token=token, verbose=verbose)
         if not no_screen:
-            print_results(author, articulos, citas)
+            print_results(author, articulos, citas, verbose=verbose)
         if not no_file:
             filename = 'refs_{}.tex'.format(clean_author(author))
             print('Writing the LaTex file {}'.format(filename))
@@ -275,15 +281,15 @@ def do_all(author, max_papers=None, no_screen=False, no_file=False,
         
 """
 # The following is used if you want to have access to the intermediate results. Otherwise, use the command-line way.
-import SNI_ads
+from SNIads import SNIads
 token = "5KAUJBW123456789dHCzvJWn73WyKVvNvyugC87M" # this one is fake, you need to use your own token
 # token=None # use this is you defined the token using the ADS_DEV_KEY environment variable
 author = 'Morisset, C.'             
-articulos = SNI_ads.get_papers(author, token=token)
-citas = SNI_ads.get_citations(articulos, token=token)
-SNI_ads.print_results(author, articulos, citas)
-f = open('refs_{}.tex'.format(SNI_ads.clean_author(author)), 'w')
-SNI_ads.print_results(author, articulos, citas, f)
+articulos = SNIads.get_papers(author, token=token)
+citas = SNIads.get_citations(articulos, token=token)
+SNIads.print_results(author, articulos, citas)
+f = open('refs_{}.tex'.format(SNIads.clean_author(author)), 'w')
+SNIads.print_results(author, articulos, citas, f)
 f.close()
 """
 
@@ -294,6 +300,7 @@ def main():
     parser.add_argument("-m", "--max_papers", help="Maximum number of papers to consider.", type=int)
     parser.add_argument("-ns", "--no_screen", help="No screen output.", action="store_true")
     parser.add_argument("-nf", "--no_file", help="No file output.", action="store_true")
+    parser.add_argument("-v", "--verbose", help="Verbose", action="store_true")
     parser.add_argument("-V", "--version", action="version", version=version,
                         help="Display version information and exit.")
     parser.add_argument("-ex", "--exclude_bibcodes", help="A filename containing the bibcodes to be excluded")
@@ -302,7 +309,7 @@ def main():
     if args.author == '' and args.include_bibcodes is None:
         raise ValueError('at least an author name or an include file must be given')
     do_all(args.author, max_papers=args.max_papers, no_screen=args.no_screen, no_file=args.no_file, 
-           token=args.token, ex_file = args.exclude_bibcodes, in_file=args.include_bibcodes)
+           token=args.token, ex_file = args.exclude_bibcodes, in_file=args.include_bibcodes, verbose=args.verbose)
 
 if __name__ == '__main__':            
     main()
