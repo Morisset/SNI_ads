@@ -274,7 +274,7 @@ def do_all(author, max_papers=None, no_screen=False, no_file=False,
         if not no_file:
             filename = 'refs_{}.tex'.format(clean_author(author))
             print('Writing the LaTex file {}'.format(filename))
-            print_results(author, articulos, citas, filename=filename)
+            print_results(author, articulos, citas, filename=filename, verbose=verbose)
             print('Done')
     else:
         print('No papers found, something went wrong. Check ADS token and Internet connection.')
