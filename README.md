@@ -1,5 +1,4 @@
-Este programa funciona en python 2.N
-Estoy trabajando en la versión 3.N...
+Este programa funciona en python 2 y 3.
 
 
 **WARNING: este programa genera un fichero que TIENES QUE VERIFICAR, porque puede ser que aun tiene errores, por ejemplo:**
@@ -36,7 +35,7 @@ Puede ser que necesiten tambien unidecode (si ya lo tienen, lo siguiente no va h
 
 `pip install unidecode`
 
-Et voilà!
+Et voil� !
 
 
 `SNIads 'Morisset, Christophe' -t "5K123456789HCzvJWn7312345678987M"`

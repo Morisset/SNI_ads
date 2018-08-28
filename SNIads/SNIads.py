@@ -8,6 +8,7 @@ Created on 14 dec. 2015
 
 
 #from __future__ import unicode_literals
+import sys
 import ads
 import requests.packages.urllib3
 from unidecode import unidecode
@@ -24,8 +25,12 @@ MAX_papers = 1000000
 
 #cv = lambda str: unicode(str).encode('utf8')
 #cv = lambda str: unidecode(str).replace('$', '').replace('#', '').replace('&', '').replace('_', '\_')    
-cv = lambda str: unidecode(str).translate(None, '$#&').replace('_', '\_')    
-    
+if sys.version_info.major < 3:
+    cv = lambda str: unidecode(str).translate(None, '$#&').replace('_', '\_')    
+else:
+    table = str.maketrans(dict.fromkeys('$#&'))
+    cv = lambda str: unidecode(str).translate(table).replace('_', '\_')    
+
 clean_author = lambda author: ''.join([s for s in author if s not in ('.', ' ', ',')])
 
 def read_bibcode_file(filename):
