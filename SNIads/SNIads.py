@@ -14,8 +14,8 @@ import requests.packages.urllib3
 from unidecode import unidecode
 import argparse
 from distutils.version import LooseVersion
-from .version import version
-
+#from .version import version
+version = '44'
 if LooseVersion(ads.__version__) < LooseVersion('0.11.3'):
     raise Exception('ads version is {}. You must update ads to at least v0.11.3 to use this version of SNI_ads. Use "pip install -U ads"'.format(ads.__version__))
 
@@ -27,9 +27,14 @@ MAX_papers = 1000000
 #cv = lambda str: unidecode(str).replace('$', '').replace('#', '').replace('&', '').replace('_', '\_')    
 if sys.version_info.major < 3:
     cv = lambda str: unidecode(str).translate(None, '$#&').replace('_', '\_')    
+    def isFile(f):
+        return isinstance(f, file) 
 else:
     table = str.maketrans(dict.fromkeys('$#&'))
     cv = lambda str: unidecode(str).translate(table).replace('_', '\_')    
+    def isFile(f):
+        return hasattr(f, 'read') 
+
 
 clean_author = lambda author: ''.join([s for s in author if s not in ('.', ' ', ',')])
 
@@ -194,7 +199,7 @@ def print_results(author, papers, citations, filename=None, verbose=False):
     if filename is None:
         def myprint(str):
             print(str)
-    elif type(filename) is file:
+    elif isFile(filename):
         f = filename
         def myprint(str):        
             f.write(str + '\n')
@@ -262,7 +267,7 @@ def print_results(author, papers, citations, filename=None, verbose=False):
     totall= total_typeA, +total_typeB + total_typeC
     myprint('TOTAL {} type A = {}, type B = {}, type C = {}'.format(totall, total_typeA, total_typeB, total_typeC))
     myprint('\\end{document}')
-    if filename is not None and type(filename) is not file:
+    if filename is not None and not isFile(filename):
         f.close()
 
 def do_all(author, max_papers=None, no_screen=False, no_file=False, 
