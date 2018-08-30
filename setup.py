@@ -14,7 +14,7 @@ Operating System :: Unix
 """
 NAME = "SNIads"
 MAJOR = 7
-MINOR = 3
+MINOR = 4
 ISRELEASED = True
 VERSION = '%d.%d' % (MAJOR, MINOR)
 REVISION = 0 + int(os.popen("git rev-list --all | wc -l").read())
