@@ -47,15 +47,10 @@ Deberia resultar en un fichero LaTex de nombre en este caso "refs_MorissetChrist
 Si tienes un nombre bastane comun pero que tienes ya una lista de los bibcodes que coresponden a tus articulos en un fichero por ejemplo nombrado in_refs.dat de este tipo (puede ser que los [] sean (), no importa):
 ```
 [2016A&A...585A..69G] 
-
-[2015EAS....71..313G] 
-
+[2015EAS....71..313G]
 [2015arXiv151004548M] 
-
 [2015MNRAS.452.2606G] 
-
 [2015MNRAS.452.1764R] 
-
 [2015IAUGA..2255587P] 
 ```
 
