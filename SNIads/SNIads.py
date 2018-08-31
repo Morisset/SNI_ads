@@ -277,6 +277,9 @@ def do_all(author, max_papers=None, no_screen=False, no_file=False,
     """
     articulos = get_papers(author, max_papers=max_papers, 
                            token=token, ex_file=ex_file, in_file=in_file, verbose=verbose)
+    if verbose:
+        print('Python version: ', sys.version_info.major)
+        
     if articulos is not None and len(articulos) != 0:
         citas = get_citations(articulos, token=token, verbose=verbose)
         if not no_screen:
