@@ -56,7 +56,7 @@ Si tienes un nombre bastane comun pero que tienes ya una lista de los bibcodes q
 
 puedes usar:
 
-`SNI_ads.py  -t "5K123456789HCzvJWn7312345678987M" -in in_refs.dat "Morisset, C."` 
+`SNIads  -t "5K123456789HCzvJWn7312345678987M" -in in_refs.dat "Morisset, C."` 
 
 Si se debe mencionar un autor, para que se puede separar las citas de tipo B y C.
 
