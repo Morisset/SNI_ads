@@ -65,24 +65,17 @@ puedes usar:
 
 Si se debe mencionar un autor, para que se puede separar las citas de tipo B y C.
 
-# The following is used if you want to have access to the intermediate results. Otherwise, use the command-line way.
+### The following is used if you want to have access to the intermediate results. Otherwise, use the command-line way.
 
+```
 from SNIads import SNIads
-
 token = "5KAUJBW123456789dHCzvJWn73WyKVvNvyugC87M" # this one is fake, you need to use your own token
-
-# token=None # use this is you defined the token using the ADS_DEV_KEY environment variable
-
+token=None # use this is you defined the token using the ADS_DEV_KEY environment variable
 author = 'Morisset, C.'             
-
 articulos = SNIads.get_papers(author, token=token)
-
 citas = SNIads.get_citations(articulos, token=token)
-
 SNIads.print_results(author, articulos, citas)
-
 f = open('refs_{}.tex'.format(SNIads.clean_author(author)), 'w')
-
 SNIads.print_results(author, articulos, citas, f)
-
 f.close()
+```
