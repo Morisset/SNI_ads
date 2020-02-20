@@ -44,7 +44,11 @@ def read_bibcode_file(filename):
     with open(filename, 'r') as datafile:
         for row in datafile:
             if row[0] != "#" and row[0] != "\n":
-                res.append(row.strip().translate(None, '[](){}'))
+                if sys.version_info.major < 3:
+                    res.append(row.strip().translate(None, '[](){}'))
+                else:
+                    table = str.maketrans(dict.fromkeys('[](){}'))
+                    res.append(row.strip().translate(table))
     return res
     
 
