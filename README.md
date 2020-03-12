@@ -18,6 +18,8 @@ _" En la Sección Citas de Artí­culos adjunte un archivo en formato PDF no mayor 
 
 _Se  sugiere  realizar  la  búsqueda de  las  citas a  través  de  alguna  de  las  bases  de  datos internacionales especializadas."_
 
+Agregué citas de tipo "C", que son aquellas donde el autor mismo se autocita.
+
 Se usa ADS para buscar la información requirida. Elprimer problema a arreglar es el filtro de ADS que impidé hacer multiples busquedas en sequido (para evitar que los robotes que poblan el WWW se pongan a chupar todos los articulos...). Para evitar este problema, hay que registrarse a la pagina: https://ui.adsabs.harvard.edu/#user/account/register
 Una ves registrado, uno puede pedir un "token", o sea un clave que se requiere para tener acceso a la base ADS.
 
