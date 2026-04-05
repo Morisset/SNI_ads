@@ -278,6 +278,7 @@ def print_results(author, papers, citations, filename=None, verbose=False):
                 myprint(f'\\item {pretty_ref(p, with_title=True)} \\\\')
                 myprint(f'Total = {this_count}, Type A = {len(typeA)}, type B = {len(typeB)}, type C = {len(typeC)} \\\\')
                 myprint(f'ADS link: https://ui.adsabs.harvard.edu/abs/{p.bibcode.replace("&", r"\&")}/abstract \\\\')
+                myprint(f'DOI: {p.doi if hasattr(p, "doi") else "N/A"} \\\\')
                 if len(typeA) > 0:
                     myprint('{\\bf Citations Type A:}')
                     myprint('\\begin{itemize}')
