@@ -12,11 +12,30 @@ import requests.packages.urllib3
 from unidecode import unidecode
 import argparse
 from packaging.version import Version
-from importlib.metadata import version as _get_version, PackageNotFoundError as _PNF
 try:
-    _version = _get_version("SNIads")
-except _PNF:
-    _version = "unknown"
+    import tomllib as _tomllib
+except ImportError:
+    try:
+        import tomli as _tomllib
+    except ImportError:
+        _tomllib = None
+
+def _read_version():
+    if _tomllib is not None:
+        import os
+        _pyproject = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'pyproject.toml')
+        try:
+            with open(_pyproject, 'rb') as _f:
+                return _tomllib.load(_f)['project']['version']
+        except Exception:
+            pass
+    from importlib.metadata import version as _get_version, PackageNotFoundError as _PNF
+    try:
+        return _get_version("SNIads")
+    except _PNF:
+        return "unknown"
+
+_version = _read_version()
 
 if Version(ads.__version__) < Version('0.11.3'):
     raise Exception(f'ads version is {ads.__version__}. You must update ads to at least v0.11.3 to use this version of SNI_ads. Use "pip install -U ads"')
