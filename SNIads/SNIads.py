@@ -147,7 +147,7 @@ def clean_arXiv(papers):
             res.append(p)
     return res    
 
-def get_papers(author, max_papers=None, token=None, ex_file=None, in_file=None, verbose=False, rows=200):
+def get_papers(author, max_papers=None, token=None, ex_file=None, in_file=None, verbose=False, rows=200, only_cited=False):
     """
     Returns a list of all the papers from author that contain at least one citation.
     max_paper can reduce the number of papers. The default is MAX_papers (1000000)
@@ -184,7 +184,10 @@ def get_papers(author, max_papers=None, token=None, ex_file=None, in_file=None, 
             print(f'Error querying ADS for author {author}: {e}')
             papers = None
     try:
-        papers = [p for p in papers][0:max_papers]
+        if only_cited:
+             papers = [p for p in papers if p.citation_count > 0][0:max_papers]
+        else:
+            papers = [p for p in papers][0:max_papers]
     except (TypeError, AttributeError):
         papers = None
         print(f'Got 0 papers from {author} with at least one citation')
@@ -222,7 +225,7 @@ def get_citations(papers, token=None, verbose=False, rows=200):
                 print(f'Got {N_citations} citations for paper {p.bibcode}.')
     return citations
 
-def print_results(author, papers, citations, filename=None, verbose=False):
+def print_results(author, papers, citations, filename=None, verbose=False, only_cited=True):
     """
     Print the results on the screen and in a file.
     """
@@ -250,10 +253,10 @@ def print_results(author, papers, citations, filename=None, verbose=False):
         typeC = [] # autocita
         N_citations = p.citation_count
         authors = [pretty_author_name(a) for a in p.author]
-        myprint(f'\\item {pretty_ref(p, with_title=True)} \\\\')
-        myprint(f'ADS link: https://ui.adsabs.harvard.edu/abs/{p.bibcode.replace("&", r"\&")}/abstract \\\\')
-        myprint(f'DOI: {p.doi if hasattr(p, "doi") else "N/A"} \\\\')
         if N_citations > 0:
+            myprint(f'\\item {pretty_ref(p, with_title=True)} \\\\')
+            myprint(f'ADS link: https://ui.adsabs.harvard.edu/abs/{p.bibcode.replace("&", r"\&")}/abstract \\\\')
+            myprint(f'DOI: {p.doi if hasattr(p, "doi") else "N/A"} \\\\')
             for citing in citations[p.bibcode]:
                 autocite = False
                 autociteco = False
@@ -277,7 +280,7 @@ def print_results(author, papers, citations, filename=None, verbose=False):
             total_typeB += len(typeB)
             total_typeC += len(typeC)
             this_count = len(typeA) + len(typeB) + len(typeC)
-            if len(typeA) + len(typeB) > 0:
+            if this_count > 0:
                 myprint(f'Total = {this_count}, Type A = {len(typeA)}, type B = {len(typeB)}, type C = {len(typeC)} \\\\')
                 if len(typeA) > 0:
                     myprint('{\\bf Citations Type A:}')
@@ -291,8 +294,17 @@ def print_results(author, papers, citations, filename=None, verbose=False):
                     for pc in sorted(typeB , key=lambda pp: (pp.year, pp.author[0])):
                         myprint(f'\\item {pretty_ref(pc)}')
                     myprint('\\end{itemize}')
-        else:
-             myprint('No citations \\\\')
+                if len(typeC) > 0:
+                    myprint('{\\bf Citations Type C:}')
+                    myprint('\\begin{itemize}')
+                    for pc in sorted(typeC , key=lambda pp: (pp.year, pp.author[0])):
+                        myprint(f'\\item {pretty_ref(pc)}')
+                    myprint('\\end{itemize}')
+        elif not only_cited:
+            myprint(f'\\item {pretty_ref(p, with_title=True)} \\\\')
+            myprint(f'ADS link: https://ui.adsabs.harvard.edu/abs/{p.bibcode.replace("&", r"\&")}/abstract \\\\')
+            myprint(f'DOI: {p.doi if hasattr(p, "doi") else "N/A"} \\\\')
+            myprint('No citations \\\\')
         myprint('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%')
     myprint('\\end{enumerate}')
     totall = total_typeA + total_typeB + total_typeC
@@ -302,20 +314,20 @@ def print_results(author, papers, citations, filename=None, verbose=False):
         f.close()
 
 def do_all(author, max_papers=None, no_screen=False, no_file=False,
-           token=None, ex_file=None, in_file=None, verbose=None, rows=200):
+           token=None, ex_file=None, in_file=None, verbose=None, rows=200, only_cited=False):
     """
     Run the different part of the program to directly obtain the LaTex file
     """
     articulos = get_papers(author, max_papers=max_papers,
-                           token=token, ex_file=ex_file, in_file=in_file, verbose=verbose, rows=rows)
+                           token=token, ex_file=ex_file, in_file=in_file, verbose=verbose, rows=rows, only_cited=only_cited)
     if articulos is not None and len(articulos) != 0:
         citas = get_citations(articulos, token=token, verbose=verbose, rows=rows)
         if not no_screen:
-            print_results(author, articulos, citas, verbose=verbose)
+            print_results(author, articulos, citas, verbose=verbose, only_cited=only_cited)
         if not no_file:
             filename = f'refs_{clean_author(author)}.tex'
             print(f'Writing the LaTex file {filename}')
-            print_results(author, articulos, citas, filename=filename, verbose=verbose)
+            print_results(author, articulos, citas, filename=filename, verbose=verbose, only_cited=only_cited)
             print('Done')
     else:
         print('No papers found, something went wrong. Check ADS token and Internet connection.')
@@ -341,6 +353,7 @@ def main():
     parser.add_argument("-m", "--max_papers", help="Maximum number of papers to consider.", type=int)
     parser.add_argument("-ns", "--no_screen", help="No screen output.", action="store_true")
     parser.add_argument("-nf", "--no_file", help="No file output.", action="store_true")
+    parser.add_argument("-oc", "--only_cited", help="Only cited papers are printed.", action="store_true")
     parser.add_argument("-v", "--verbose", help="Verbose", action="store_true")
     parser.add_argument("-V", "--version", action="version", version=_version,
                         help="Display version information and exit.")
@@ -352,7 +365,7 @@ def main():
         raise ValueError('at least an author name or an include file must be given')
     do_all(args.author, max_papers=args.max_papers, no_screen=args.no_screen, no_file=args.no_file,
            token=args.token, ex_file=args.exclude_bibcodes, in_file=args.include_bibcodes, verbose=args.verbose,
-           rows=args.rows)
+           rows=args.rows, only_cited=args.only_cited)
 
 if __name__ == '__main__':            
     main()
