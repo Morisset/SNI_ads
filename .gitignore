@@ -6,6 +6,7 @@ refs_*
 ADS_tokens.txt
 *.dat
 *.tex#
+SNIads/version.py
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

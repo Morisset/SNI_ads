@@ -12,7 +12,11 @@ import requests.packages.urllib3
 from unidecode import unidecode
 import argparse
 from packaging.version import Version
-from .version import version
+from importlib.metadata import version as _get_version, PackageNotFoundError as _PNF
+try:
+    _version = _get_version("SNIads")
+except _PNF:
+    _version = "unknown"
 
 if Version(ads.__version__) < Version('0.11.3'):
     raise Exception(f'ads version is {ads.__version__}. You must update ads to at least v0.11.3 to use this version of SNI_ads. Use "pip install -U ads"')
@@ -73,7 +77,7 @@ def auts(p):
     return auts
    
 def pretty_ref(p, with_title=False):
-    """
+    r"""
     Returns a string in the form
     authors, year, {\it title}, pub, volume, page
     by default, title is not included. Changed by with_title keyword.
@@ -305,7 +309,7 @@ def main():
     parser.add_argument("-ns", "--no_screen", help="No screen output.", action="store_true")
     parser.add_argument("-nf", "--no_file", help="No file output.", action="store_true")
     parser.add_argument("-v", "--verbose", help="Verbose", action="store_true")
-    parser.add_argument("-V", "--version", action="version", version=version,
+    parser.add_argument("-V", "--version", action="version", version=_version,
                         help="Display version information and exit.")
     parser.add_argument("-ex", "--exclude_bibcodes", help="A filename containing the bibcodes to be excluded")
     parser.add_argument("-in", "--include_bibcodes", help="A filename containing the bibcodes to be included. In this case, the author may be omitted")

@@ -1,0 +1,28 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "SNIads"
+version = "8.3"
+description = "A one-line command to manage citations for SNI"
+authors = [{name = "Christophe Morisset", email = "chris.morisset@gmail.com"}]
+license = {text = "LGPL"}
+requires-python = ">=3.8"
+keywords = ["text", "search", "command-line"]
+dependencies = [
+    "ads>=0.11.3",
+    "unidecode",
+    "requests",
+    "packaging",
+]
+
+[project.urls]
+Homepage = "http://github.com/Morisset/SNI_ads"
+
+[project.scripts]
+SNIads = "SNIads.SNIads:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["SNIads*"]

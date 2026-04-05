@@ -28,7 +28,7 @@ https://ui.adsabs.harvard.edu/#user/settings/token
 "5K123456789HCzvJWn7312345678987M"
 
 Otro paso antes de correr el programa es la instalación de la librarya python "ads". Se requiere la mas reciente versión (> 0.11.3, del 30 de dic. de 2015).
-Supongo que tienen una distribuci�n de python en buen estado, con el programa de manejo de paquetes. En este caso, solo hacer (para instalar o hacer el update):
+Supongo que tienen una distribución de python en buen estado, con el programa de manejo de paquetes. En este caso, solo hacer (para instalar o hacer el update):
 
 `pip install -U ads`
 
