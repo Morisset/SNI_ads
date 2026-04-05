@@ -47,7 +47,12 @@ MAX_papers = 1000000
 _latex_table = str.maketrans(dict.fromkeys('$#&'))
 
 def cv(s):
-    return unidecode(s).translate(_latex_table).replace('_', r'\_')
+    if type(s) == str:
+        return unidecode(s).translate(_latex_table).replace('_', r'\_')
+    elif type(s) == list:
+        return ' ; '.join(cv(ss) for ss in s)
+    else:
+        return s
 
 def isFile(f):
     return hasattr(f, 'read')
@@ -223,6 +228,8 @@ def get_citations(papers, token=None, verbose=False, rows=200):
                     print(f'Error fetching citations for {p.bibcode}: {e}')
                     citations[p.bibcode] = []
                 print(f'Got {N_citations} citations for paper {p.bibcode}.')
+            else:
+                print(f'No citations for paper {p.bibcode}.')
     return citations
 
 def print_results(author, papers, citations, filename=None, verbose=False, only_cited=True):
@@ -256,7 +263,7 @@ def print_results(author, papers, citations, filename=None, verbose=False, only_
         if N_citations > 0:
             myprint(f'\\item {pretty_ref(p, with_title=True)} \\\\')
             myprint(f'ADS link: https://ui.adsabs.harvard.edu/abs/{p.bibcode.replace("&", r"\&")}/abstract \\\\')
-            myprint(f'DOI: {p.doi if hasattr(p, "doi") else "N/A"} \\\\')
+            myprint(f'DOI: {cv(p.doi) if hasattr(p, "doi") else "N/A"} \\\\')
             for citing in citations[p.bibcode]:
                 autocite = False
                 autociteco = False
@@ -303,7 +310,7 @@ def print_results(author, papers, citations, filename=None, verbose=False, only_
         elif not only_cited:
             myprint(f'\\item {pretty_ref(p, with_title=True)} \\\\')
             myprint(f'ADS link: https://ui.adsabs.harvard.edu/abs/{p.bibcode.replace("&", r"\&")}/abstract \\\\')
-            myprint(f'DOI: {p.doi if hasattr(p, "doi") else "N/A"} \\\\')
+            myprint(f'DOI: {cv(p.doi) if hasattr(p, "doi") else "N/A"} \\\\')
             myprint('No citations \\\\')
         myprint('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%')
     myprint('\\end{enumerate}')
