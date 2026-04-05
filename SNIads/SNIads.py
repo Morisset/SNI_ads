@@ -184,7 +184,7 @@ def get_papers(author, max_papers=None, token=None, ex_file=None, in_file=None, 
             print(f'Error querying ADS for author {author}: {e}')
             papers = None
     try:
-        papers = [p for p in papers if p.citation_count > 0][0:max_papers]
+        papers = [p for p in papers][0:max_papers]
     except (TypeError, AttributeError):
         papers = None
         print(f'Got 0 papers from {author} with at least one citation')
@@ -192,7 +192,7 @@ def get_papers(author, max_papers=None, token=None, ex_file=None, in_file=None, 
     if ex_file is not None:
         ex_bibcodes = read_bibcode_file(ex_file)
         papers = [p for p in papers if p.bibcode not in ex_bibcodes]
-    print(f'Got {len(papers)} papers from {author} with at least one citation')
+    print(f'Got {len(papers)} papers from {author}')
     return papers
 
 def get_citations(papers, token=None, verbose=False, rows=200):
@@ -250,6 +250,9 @@ def print_results(author, papers, citations, filename=None, verbose=False):
         typeC = [] # autocita
         N_citations = p.citation_count
         authors = [pretty_author_name(a) for a in p.author]
+        myprint(f'\\item {pretty_ref(p, with_title=True)} \\\\')
+        myprint(f'ADS link: https://ui.adsabs.harvard.edu/abs/{p.bibcode.replace("&", r"\&")}/abstract \\\\')
+        myprint(f'DOI: {p.doi if hasattr(p, "doi") else "N/A"} \\\\')
         if N_citations > 0:
             for citing in citations[p.bibcode]:
                 autocite = False
@@ -275,10 +278,7 @@ def print_results(author, papers, citations, filename=None, verbose=False):
             total_typeC += len(typeC)
             this_count = len(typeA) + len(typeB) + len(typeC)
             if len(typeA) + len(typeB) > 0:
-                myprint(f'\\item {pretty_ref(p, with_title=True)} \\\\')
                 myprint(f'Total = {this_count}, Type A = {len(typeA)}, type B = {len(typeB)}, type C = {len(typeC)} \\\\')
-                myprint(f'ADS link: https://ui.adsabs.harvard.edu/abs/{p.bibcode.replace("&", r"\&")}/abstract \\\\')
-                myprint(f'DOI: {p.doi if hasattr(p, "doi") else "N/A"} \\\\')
                 if len(typeA) > 0:
                     myprint('{\\bf Citations Type A:}')
                     myprint('\\begin{itemize}')
@@ -291,7 +291,9 @@ def print_results(author, papers, citations, filename=None, verbose=False):
                     for pc in sorted(typeB , key=lambda pp: (pp.year, pp.author[0])):
                         myprint(f'\\item {pretty_ref(pc)}')
                     myprint('\\end{itemize}')
-                myprint('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%')
+        else:
+             myprint('No citations \\\\')
+        myprint('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%')
     myprint('\\end{enumerate}')
     totall = total_typeA + total_typeB + total_typeC
     myprint(f'TOTAL {totall} type A = {total_typeA}, type B = {total_typeB}, type C = {total_typeC}')
