@@ -27,18 +27,6 @@ https://ui.adsabs.harvard.edu/#user/settings/token
 . Hay que recuperar una clave de este tipo:
 "5K123456789HCzvJWn7312345678987M"
 
-Otro paso antes de correr el programa es la instalación de la librarya python "ads". Se requiere la mas reciente versión (> 0.11.3, del 30 de dic. de 2015).
-Supongo que tienen una distribución de python en buen estado, con el programa de manejo de paquetes. En este caso, solo hacer (para instalar o hacer el update):
-
-`pip install -U ads`
-
-Puede ser que necesiten tambien unidecode (si ya lo tienen, lo siguiente no va hacer daños):
-
-`pip install unidecode`
-
-Et voilà !
-
-
 `SNIads 'Morisset, Christophe' -t "5K123456789HCzvJWn7312345678987M"`
 
 donde se da el nombre del author (mejor poner en nombre y el apelido) que buscas y el token que has recuperado del sitio ADS (el que esta en este ejemplo NO funciona).

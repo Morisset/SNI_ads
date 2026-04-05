@@ -1,0 +1,4 @@
+ads>=0.11.3
+unidecode
+requests
+packaging
