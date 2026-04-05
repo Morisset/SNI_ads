@@ -90,24 +90,24 @@ def pretty_ref(p, with_title=False):
     """
     try:
         year = ', {}'.format(cv(p.year))
-    except:
+    except (AttributeError, TypeError):
         year = ''
     try:
         pub = ', {}'.format(cv(p.pub))
-    except:
+    except (AttributeError, TypeError):
         pub = ''
     try:
         volume = ', {}'.format(cv(p.volume))
-    except:
+    except (AttributeError, TypeError):
         volume = ''
     try:
         page = ', {}'.format(cv(p.page[0]))
-    except:
+    except (AttributeError, TypeError, IndexError):
         page = ''
     if with_title:
         try:
             title = ', {{\it {}}}'.format(cv(p.title[0]))
-        except:
+        except (AttributeError, TypeError, IndexError):
             title = ''
     else:
         title = ''
@@ -161,11 +161,12 @@ def get_papers(author, max_papers=None, token=None, ex_file=None, in_file=None, 
                           token=token)
         try:
             papers = list(res)
-        except:
+        except Exception as e:
+            print('Error querying ADS for author {}: {}'.format(author, e))
             papers = None
     try:
         papers = [p for p in papers if p.citation_count > 0][0:max_papers]
-    except:
+    except (TypeError, AttributeError):
         papers = None
         print('Got 0 papers from {} with at least one citation'.format(author))
         return papers
@@ -242,7 +243,7 @@ def print_results(author, papers, citations, filename=None, verbose=False):
                         typeB.append(citing)
                     else:
                         typeA.append(citing)
-                except:
+                except (AttributeError, TypeError):
                     pass
             total_typeA += len(typeA)
             total_typeB += len(typeB)
@@ -254,7 +255,7 @@ def print_results(author, papers, citations, filename=None, verbose=False):
                                                                                         len(typeA), 
                                                                                         len(typeB), 
                                                                                         len(typeC)))
-                myprint('ADS link: {} \\\\'.format('https://ui.adsabs.harvard.edu/abs/{}/abstract'.format(p.bibcode)))
+                myprint('ADS link: {} \\\\'.format('https://ui.adsabs.harvard.edu/abs/{}/abstract'.format(p.bibcode.replace('&', r'\&'))))
                 if len(typeA) > 0:
                     myprint('{\\bf Citations Type A:}')
                     myprint('\\begin{itemize}')
@@ -269,7 +270,7 @@ def print_results(author, papers, citations, filename=None, verbose=False):
                     myprint('\\end{itemize}')
                 myprint('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%')
     myprint('\\end{enumerate}')
-    totall= total_typeA, +total_typeB + total_typeC
+    totall = total_typeA + total_typeB + total_typeC
     myprint('TOTAL {} type A = {}, type B = {}, type C = {}'.format(totall, total_typeA, total_typeB, total_typeC))
     myprint('\\end{document}')
     if filename is not None and not isFile(filename):

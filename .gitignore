@@ -1,11 +1,43 @@
+# Project-specific
 .project
 .pydevproject
 *.prefs
 refs_*
 ADS_tokens.txt
-
-*.pyc
-
 *.dat
-
 *.tex#
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Distribution / packaging
+*.egg-info/
+*.egg
+dist/
+build/
+.eggs/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Unit test / coverage reports
+.coverage
+htmlcov/
+.pytest_cache/
+.tox/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# pyenv
+.python-version
+
+# Environment variables
+.env
+
+# macOS
+.DS_Store
