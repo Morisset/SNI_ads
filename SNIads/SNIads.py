@@ -7,48 +7,39 @@ Created on 14 dec. 2015
 '''
 
 
-#from __future__ import unicode_literals
-import sys
 import ads
 import requests.packages.urllib3
 from unidecode import unidecode
 import argparse
-from distutils.version import LooseVersion
+from packaging.version import Version
 from .version import version
 
-if LooseVersion(ads.__version__) < LooseVersion('0.11.3'):
-    raise Exception('ads version is {}. You must update ads to at least v0.11.3 to use this version of SNI_ads. Use "pip install -U ads"'.format(ads.__version__))
+if Version(ads.__version__) < Version('0.11.3'):
+    raise Exception(f'ads version is {ads.__version__}. You must update ads to at least v0.11.3 to use this version of SNI_ads. Use "pip install -U ads"')
 
 requests.packages.urllib3.disable_warnings()
 MAX_pages = 1000
 MAX_papers = 1000000
 
-#cv = lambda str: unicode(str).encode('utf8')
-#cv = lambda str: unidecode(str).replace('$', '').replace('#', '').replace('&', '').replace('_', '\_')    
-if sys.version_info.major < 3:
-    cv = lambda str: unidecode(str).translate(None, '$#&').replace('_', '\_')    
-    def isFile(f):
-        return isinstance(f, file) 
-else:
-    table = str.maketrans(dict.fromkeys('$#&'))
-    cv = lambda str: unidecode(str).translate(table).replace('_', '\_')    
-    def isFile(f):
-        return hasattr(f, 'read') 
+_latex_table = str.maketrans(dict.fromkeys('$#&'))
 
+def cv(s):
+    return unidecode(s).translate(_latex_table).replace('_', r'\_')
 
-clean_author = lambda author: ''.join([s for s in author if s not in ('.', ' ', ',')])
+def isFile(f):
+    return hasattr(f, 'read')
+
+def clean_author(author):
+    return ''.join(s for s in author if s not in ('.', ' ', ','))
 
 def read_bibcode_file(filename):
     
+    _table = str.maketrans(dict.fromkeys('[](){}'))
     res = []
     with open(filename, 'r') as datafile:
         for row in datafile:
             if row[0] != "#" and row[0] != "\n":
-                if sys.version_info.major < 3:
-                    res.append(row.strip().translate(None, '[](){}'))
-                else:
-                    table = str.maketrans(dict.fromkeys('[](){}'))
-                    res.append(row.strip().translate(table))
+                res.append(row.strip().translate(_table))
     return res
     
 
@@ -66,7 +57,7 @@ def pretty_author_name(authors):
             res2 = aspl[2].strip()[0]
         else:
             res2 = ''
-        return  "{}, {}.".format(cv(res1), cv(res2) )
+        return f"{cv(res1)}, {cv(res2)}."
     else:
         return cv(authors)
 
@@ -89,30 +80,30 @@ def pretty_ref(p, with_title=False):
     type(p) is ads.search.Article
     """
     try:
-        year = ', {}'.format(cv(p.year))
+        year = f', {cv(p.year)}'
     except (AttributeError, TypeError):
         year = ''
     try:
-        pub = ', {}'.format(cv(p.pub))
+        pub = f', {cv(p.pub)}'
     except (AttributeError, TypeError):
         pub = ''
     try:
-        volume = ', {}'.format(cv(p.volume))
+        volume = f', {cv(p.volume)}'
     except (AttributeError, TypeError):
         volume = ''
     try:
-        page = ', {}'.format(cv(p.page[0]))
+        page = f', {cv(p.page[0])}'
     except (AttributeError, TypeError, IndexError):
         page = ''
     if with_title:
         try:
-            title = ', {{\it {}}}'.format(cv(p.title[0]))
+            title = f', {{\\it {cv(p.title[0])}}}'
         except (AttributeError, TypeError, IndexError):
             title = ''
     else:
         title = ''
         
-    return('{}{}{}{}{}{}'.format(auts(p), year, title, pub, volume, page))
+    return f'{auts(p)}{year}{title}{pub}{volume}{page}'
          
 def clean_arXiv(papers):
     """
@@ -128,7 +119,7 @@ def clean_arXiv(papers):
                 #    print('!!!!!!-2-  {} '.format(cv(p2.title[0])))
                 if cv(p.title[0]) == cv(p2.title[0]) and auts(p) == auts(p2) and p2.pub != 'ArXiv e-prints':
                     keep_it = False
-                    print('Removing {}'.format(p.title)) 
+                    print(f'Removing {p.title}')
         if keep_it:
             res.append(p)
     return res    
@@ -147,7 +138,7 @@ def get_papers(author, max_papers=None, token=None, ex_file=None, in_file=None, 
         papers = []
         for bibcode in in_bibcodes[0:max_papers]:
             if verbose:
-                print('get_papers for bibcode = {}'.format(bibcode))
+                print(f'get_papers for bibcode = {bibcode}')
             res =  ads.SearchQuery(bibcode=bibcode, 
                                    fl='author, title, year, pub, volume, page, citation, citation_count, bibcode',
                                    max_pages=MAX_pages,
@@ -162,18 +153,18 @@ def get_papers(author, max_papers=None, token=None, ex_file=None, in_file=None, 
         try:
             papers = list(res)
         except Exception as e:
-            print('Error querying ADS for author {}: {}'.format(author, e))
+            print(f'Error querying ADS for author {author}: {e}')
             papers = None
     try:
         papers = [p for p in papers if p.citation_count > 0][0:max_papers]
     except (TypeError, AttributeError):
         papers = None
-        print('Got 0 papers from {} with at least one citation'.format(author))
+        print(f'Got 0 papers from {author} with at least one citation')
         return papers
     if ex_file is not None:
         ex_bibcodes = read_bibcode_file(ex_file)
         papers = [p for p in papers if p.bibcode not in ex_bibcodes]
-    print('Got {} papers from {} with at least one citation'.format(len(papers), author))
+    print(f'Got {len(papers)} papers from {author} with at least one citation')
     return papers
 
 def get_citations(papers, token=None, verbose=False):
@@ -188,13 +179,13 @@ def get_citations(papers, token=None, verbose=False):
             N_citations = p.citation_count
             if N_citations > 0:
                 if verbose:
-                    print('get_citations for paper {}'.format(p.title))
-                res = ads.SearchQuery(q='citations(bibcode:{})'.format(p.bibcode), 
+                    print(f'get_citations for paper {p.title}')
+                res = ads.SearchQuery(q=f'citations(bibcode:{p.bibcode})',
                                       fl='author, title, year, pub, volume, page, bibcode',
                                       max_pages=MAX_pages,
                                       token=token)
                 citations[p.bibcode] = clean_arXiv(list(res))
-                print('Got {} citations for paper {}.'.format(N_citations, p.bibcode))
+                print(f'Got {N_citations} citations for paper {p.bibcode}.')
     return citations
 
 def print_results(author, papers, citations, filename=None, verbose=False):
@@ -232,7 +223,7 @@ def print_results(author, papers, citations, filename=None, verbose=False):
                 try:
                     for this_author in citing.author:
                         if verbose:
-                            print('print_results for paper {} and coauthor {}'.format(p.title, this_author))
+                            print(f'print_results for paper {p.title} and coauthor {this_author}')
                         if pretty_author_name(this_author) == pretty_author_name(author):
                             autocite = True
                         elif pretty_author_name(this_author) in [cv(a) for a in authors]:
@@ -250,28 +241,25 @@ def print_results(author, papers, citations, filename=None, verbose=False):
             total_typeC += len(typeC)
             this_count = len(typeA) + len(typeB) + len(typeC)
             if len(typeA) + len(typeB) > 0:
-                myprint('\\item {} \\\ '.format(pretty_ref(p, with_title=True)))
-                myprint('Total = {}, Type A = {}, type B = {}, type C = {} \\\ '.format(this_count,
-                                                                                        len(typeA), 
-                                                                                        len(typeB), 
-                                                                                        len(typeC)))
-                myprint('ADS link: {} \\\\'.format('https://ui.adsabs.harvard.edu/abs/{}/abstract'.format(p.bibcode.replace('&', r'\&'))))
+                myprint(f'\\item {pretty_ref(p, with_title=True)} \\\\')
+                myprint(f'Total = {this_count}, Type A = {len(typeA)}, type B = {len(typeB)}, type C = {len(typeC)} \\\\')
+                myprint(f'ADS link: https://ui.adsabs.harvard.edu/abs/{p.bibcode.replace("&", r"\&")}/abstract \\\\')
                 if len(typeA) > 0:
                     myprint('{\\bf Citations Type A:}')
                     myprint('\\begin{itemize}')
                     for pc in sorted(typeA , key=lambda pp: (pp.year, pp.author[0])):
-                        myprint('\\item {}'.format(pretty_ref(pc))) #this one!!!
+                        myprint(f'\\item {pretty_ref(pc)}')
                     myprint('\\end{itemize}')
                 if len(typeB) > 0:
                     myprint('{\\bf Citations Type B:}')
                     myprint('\\begin{itemize}')
                     for pc in sorted(typeB , key=lambda pp: (pp.year, pp.author[0])):
-                        myprint('\\item {}'.format(pretty_ref(pc))) #this one!!!
+                        myprint(f'\\item {pretty_ref(pc)}')
                     myprint('\\end{itemize}')
                 myprint('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%')
     myprint('\\end{enumerate}')
     totall = total_typeA + total_typeB + total_typeC
-    myprint('TOTAL {} type A = {}, type B = {}, type C = {}'.format(totall, total_typeA, total_typeB, total_typeC))
+    myprint(f'TOTAL {totall} type A = {total_typeA}, type B = {total_typeB}, type C = {total_typeC}')
     myprint('\\end{document}')
     if filename is not None and not isFile(filename):
         f.close()
@@ -283,16 +271,13 @@ def do_all(author, max_papers=None, no_screen=False, no_file=False,
     """
     articulos = get_papers(author, max_papers=max_papers, 
                            token=token, ex_file=ex_file, in_file=in_file, verbose=verbose)
-    if verbose:
-        print('Python version: ', sys.version_info.major)
-        
     if articulos is not None and len(articulos) != 0:
         citas = get_citations(articulos, token=token, verbose=verbose)
         if not no_screen:
             print_results(author, articulos, citas, verbose=verbose)
         if not no_file:
-            filename = 'refs_{}.tex'.format(clean_author(author))
-            print('Writing the LaTex file {}'.format(filename))
+            filename = f'refs_{clean_author(author)}.tex'
+            print(f'Writing the LaTex file {filename}')
             print_results(author, articulos, citas, filename=filename, verbose=verbose)
             print('Done')
     else:
