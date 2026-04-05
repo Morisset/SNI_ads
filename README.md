@@ -57,7 +57,6 @@ author = 'Morisset, C.'
 articulos = SNIads.get_papers(author, token=token)
 citas = SNIads.get_citations(articulos, token=token)
 SNIads.print_results(author, articulos, citas)
-f = open('refs_{}.tex'.format(SNIads.clean_author(author)), 'w')
-SNIads.print_results(author, articulos, citas, f)
-f.close()
+with open('refs_{}.tex'.format(SNIads.clean_author(author)), 'w') as f:
+    SNIads.print_results(author, articulos, citas, f)
 ```
