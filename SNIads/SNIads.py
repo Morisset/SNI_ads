@@ -254,6 +254,7 @@ def print_results(author, papers, citations, filename=None, verbose=False):
                                                                                         len(typeA), 
                                                                                         len(typeB), 
                                                                                         len(typeC)))
+                myprint('ADS link: {} \\\\'.format('https://ui.adsabs.harvard.edu/abs/{}/abstract'.format(p.bibcode)))
                 if len(typeA) > 0:
                     myprint('{\\bf Citations Type A:}')
                     myprint('\\begin{itemize}')
