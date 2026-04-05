@@ -128,12 +128,13 @@ def clean_arXiv(papers):
             res.append(p)
     return res    
 
-def get_papers(author, max_papers=None, token=None, ex_file=None, in_file=None, verbose=False):
+def get_papers(author, max_papers=None, token=None, ex_file=None, in_file=None, verbose=False, rows=200):
     """
     Returns a list of all the papers from author that contain at least one citation.
     max_paper can reduce the number of papers. The default is MAX_papers (1000000)
     author is a string.
     The papers are ads.search.Article
+    rows controls the number of results per page (default 200); higher values reduce pagination errors.
     """
     if max_papers is None:
         max_papers = MAX_papers
@@ -143,17 +144,21 @@ def get_papers(author, max_papers=None, token=None, ex_file=None, in_file=None, 
         for bibcode in in_bibcodes[0:max_papers]:
             if verbose:
                 print(f'get_papers for bibcode = {bibcode}')
-            res =  ads.SearchQuery(bibcode=bibcode, 
-                                   fl='author, title, year, pub, volume, page, citation, citation_count, bibcode',
-                                   max_pages=MAX_pages,
-                                   token=token)
-            
-            papers.extend(list(res))
+            res = ads.SearchQuery(bibcode=bibcode,
+                                  fl='author, title, year, pub, volume, page, citation, citation_count, bibcode',
+                                  rows=rows,
+                                  max_pages=MAX_pages,
+                                  token=token)
+            try:
+                papers.extend(list(res))
+            except Exception as e:
+                print(f'Error querying ADS for bibcode {bibcode}: {e}')
     else:
-        res = ads.SearchQuery(author=author, 
-                          fl='author, title, year, pub, volume, page, citation, citation_count, bibcode',
-                          max_pages=MAX_pages,
-                          token=token)
+        res = ads.SearchQuery(author=author,
+                              fl='author, title, year, pub, volume, page, citation, citation_count, bibcode',
+                              rows=rows,
+                              max_pages=MAX_pages,
+                              token=token)
         try:
             papers = list(res)
         except Exception as e:
@@ -171,11 +176,12 @@ def get_papers(author, max_papers=None, token=None, ex_file=None, in_file=None, 
     print(f'Got {len(papers)} papers from {author} with at least one citation')
     return papers
 
-def get_citations(papers, token=None, verbose=False):
+def get_citations(papers, token=None, verbose=False, rows=200):
     """
     papers: list of ads.search.Article
-    Returns a dictionnary where each key corresponds to the bibcode of one element of papers and the value is a list of 
+    Returns a dictionnary where each key corresponds to the bibcode of one element of papers and the value is a list of
     papers citing the given paper.
+    rows controls the number of results per page (default 200); higher values reduce pagination errors.
     """
     citations = {}
     if papers is not None:
@@ -186,9 +192,14 @@ def get_citations(papers, token=None, verbose=False):
                     print(f'get_citations for paper {p.title}')
                 res = ads.SearchQuery(q=f'citations(bibcode:{p.bibcode})',
                                       fl='author, title, year, pub, volume, page, bibcode',
+                                      rows=rows,
                                       max_pages=MAX_pages,
                                       token=token)
-                citations[p.bibcode] = clean_arXiv(list(res))
+                try:
+                    citations[p.bibcode] = clean_arXiv(list(res))
+                except Exception as e:
+                    print(f'Error fetching citations for {p.bibcode}: {e}')
+                    citations[p.bibcode] = []
                 print(f'Got {N_citations} citations for paper {p.bibcode}.')
     return citations
 
@@ -268,15 +279,15 @@ def print_results(author, papers, citations, filename=None, verbose=False):
     if filename is not None and not isFile(filename):
         f.close()
 
-def do_all(author, max_papers=None, no_screen=False, no_file=False, 
-           token=None, ex_file=None, in_file=None, verbose=None):
+def do_all(author, max_papers=None, no_screen=False, no_file=False,
+           token=None, ex_file=None, in_file=None, verbose=None, rows=200):
     """
     Run the different part of the program to directly obtain the LaTex file
     """
-    articulos = get_papers(author, max_papers=max_papers, 
-                           token=token, ex_file=ex_file, in_file=in_file, verbose=verbose)
+    articulos = get_papers(author, max_papers=max_papers,
+                           token=token, ex_file=ex_file, in_file=in_file, verbose=verbose, rows=rows)
     if articulos is not None and len(articulos) != 0:
-        citas = get_citations(articulos, token=token, verbose=verbose)
+        citas = get_citations(articulos, token=token, verbose=verbose, rows=rows)
         if not no_screen:
             print_results(author, articulos, citas, verbose=verbose)
         if not no_file:
@@ -313,11 +324,13 @@ def main():
                         help="Display version information and exit.")
     parser.add_argument("-ex", "--exclude_bibcodes", help="A filename containing the bibcodes to be excluded")
     parser.add_argument("-in", "--include_bibcodes", help="A filename containing the bibcodes to be included. In this case, the author may be omitted")
+    parser.add_argument("-r", "--rows", help="Number of ADS results per page (default 200).", type=int, default=200)
     args = parser.parse_args()
     if args.author == '' and args.include_bibcodes is None:
         raise ValueError('at least an author name or an include file must be given')
-    do_all(args.author, max_papers=args.max_papers, no_screen=args.no_screen, no_file=args.no_file, 
-           token=args.token, ex_file = args.exclude_bibcodes, in_file=args.include_bibcodes, verbose=args.verbose)
+    do_all(args.author, max_papers=args.max_papers, no_screen=args.no_screen, no_file=args.no_file,
+           token=args.token, ex_file=args.exclude_bibcodes, in_file=args.include_bibcodes, verbose=args.verbose,
+           rows=args.rows)
 
 if __name__ == '__main__':            
     main()
