@@ -10,7 +10,6 @@
 
 Este programa requiere python >= 3.8.
 
-
 **pip install -U git+https://github.com/Morisset/SNI_ads.git**
 
 Este programa esta hecho para generar un documento ayudando a rellenar el Perfil Unico de RIZOMA que SECIHTI usa para los investigadores que renovan o entran en el SNI. En particular se requiere poner los articulos publicados con citas de tipo A y B:
@@ -21,7 +20,7 @@ Este programa esta hecho para generar un documento ayudando a rellenar el Perfil
 
 _Se  sugiere  realizar  la  búsqueda de  las  citas a  través  de  alguna  de  las  bases  de  datos internacionales especializadas._
 
-El programa da tambien el DOI y la liga hacia ADS que hay que incluir : _"Escriba el enlace que permita confirmar el número de citas reportado."_
+El programa da tambien los ISSNs, el DOI y la liga hacia ADS que hay que incluir : _"Escriba el enlace que permita confirmar el número de citas reportado."_
 
 
 Agregué citas de tipo "C", que son aquellas donde el autor mismo se autocita. No es un requisito de SECIHTI
@@ -79,7 +78,7 @@ puedes usar:
 
 `SNIads  -t "5K123456789HCzvJWn7312345678987M" -in in_refs.dat "Morisset, C."` 
 
-Si se debe mencionar un autor, para que se puede separar las citas de tipo B y C.
+Si se debe mencionar un autor, para que se puede separar las citas de tipo B y C. Cuidado, este metodo implica una busqueda a ADS para cada articulo, puede ser pesado (limitaciones: 5,000 busquedas/dia).
 
 Una lista de bibcodes se puede generar de manera facil desde ADS (Export/Other Formats/Custom Format) usando el formato %R.
 
