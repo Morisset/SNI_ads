@@ -3,6 +3,7 @@
 >* Hay varias maneras de codificar los acentos, que no son todas compatibles.
 >* Puede aparecer dos veces el mismo articulo en la lista de citas: uno de ArXiv, otro de la revista "real". Hay que quitar el ArXiv...
 >* Puede ser que autores se esconden bajo "et al." y que el sistema no clasifique bien.
+>
 >**<span style="color:red">¡NO GARANTIA AT ALL DE QUE EL RESULTADO SEA TOTALMENTE CORRECTO!</span>**
 
 ### Installation
