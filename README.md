@@ -1,12 +1,13 @@
 **Este programa requiere python >= 3.8.**
 
-
-**<span style="color:red">WARNING: este programa genera un fichero que TIENES QUE VERIFICAR, porque puede ser que aun tiene errores, por ejemplo:</span>**
+>[!WARNING]
+**<span style="color:red">Este programa genera un fichero que TIENES QUE VERIFICAR, porque puede ser que aun tiene errores, por ejemplo:</span>**
 * Hay varias maneras de codificar los acentos, que no son todas compatibles.
 * Puede aparecer dos veces el mismo articulo en la lista de citas: uno de ArXiv, otro de la revista "real". Hay que quitar el ArXiv...
 * Puede ser que autores se esconden bajo "et al." y que el sistema no clasifique bien.
 
-**<span style="color:red">¡NO GARANTIA AT ALL DE QUE SEA TOTALMENTE CORRECTO!</span>**
+>[!IMPORTANT]
+**<span style="color:red">¡NO GARANTIA AT ALL DE QUE EL RESULTADO SEA TOTALMENTE CORRECTO!</span>**
 
 ### Installation
 
