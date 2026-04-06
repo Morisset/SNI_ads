@@ -53,21 +53,22 @@ options:
 
 ### Ejemplo
 
-`SNIads 'Morisset, Christophe' -t "5K123456789HCzvJWn7312345678987M"`
+`SNIads 'Morisset, Christophe' -t "5K123456789HCzvJWn7312345678987M"` -sy 2021
 
-donde se da el nombre del author (mejor poner en nombre y el apelido) que buscas y el token que has recuperado del sitio ADS (el que esta en este ejemplo NO funciona).
+donde se da el nombre del author (mejor poner en nombre y el apelido) que buscas, el token que has recuperado del sitio ADS (el que esta en este ejemplo NO funciona), y se pide considerar solamente los articulos desde 2021.
 
 Deberia resultar en un fichero LaTex de nombre en este caso "refs_MorissetChristophe.tex" , de lo cual se genera un PDF bonito. Usarlo para rellenar los campos de los articulos en el "Perfil Unico".
 Mejor guardar este fichero en caso de que piden justificación de los numeros. 
 
 Si tienes un nombre bastane comun pero que tienes ya una lista de los bibcodes que coresponden a tus articulos en un fichero por ejemplo nombrado in_refs.dat de este tipo - no importa si hay [] o () - :
 ```
-2016A&A...585A..69G 
-[2015EAS....71..313G]
-(2015arXiv151004548M)
-2015MNRAS.452.2606G 
-2015MNRAS.452.1764R 
-2015IAUGA..2255587P 
+2022A&A...668A..74M
+2022NatAs...6.1421D
+2022A&A...667A..35R
+(2022MNRAS.512.3436E)
+2022MNRAS.512.4003M
+[2022MNRAS.512.2202A]
+2022MNRAS.511....1S
 ```
 
 puedes usar:

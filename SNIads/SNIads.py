@@ -163,6 +163,7 @@ def get_papers(author, max_papers=None, token=None, ex_file=None, in_file=None, 
     if max_papers is None:
         max_papers = MAX_papers
     if in_file is not None:
+        print(f'Getting papers from bibcodes in file {in_file}. May take a while if there are many bibcodes and/or many citations.')
         in_bibcodes = read_bibcode_file(in_file)
         papers = []
         for bibcode in in_bibcodes[0:max_papers]:
