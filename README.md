@@ -1,5 +1,3 @@
-**Este programa requiere python >= 3.8.**
-
 >[!WARNING]
 >**<span style="color:red">Este programa genera un fichero que TIENES QUE VERIFICAR, porque puede ser que aun tiene errores, por ejemplo:</span>**
 >* Hay varias maneras de codificar los acentos, que no son todas compatibles.
@@ -8,6 +6,9 @@
 >**<span style="color:red">¡NO GARANTIA AT ALL DE QUE EL RESULTADO SEA TOTALMENTE CORRECTO!</span>**
 
 ### Installation
+
+Este programa requiere python >= 3.8.
+
 
 **pip install -U git+https://github.com/Morisset/SNI_ads.git**
 
