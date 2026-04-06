@@ -152,7 +152,7 @@ def clean_arXiv(papers):
             res.append(p)
     return res    
 
-def get_papers(author, max_papers=None, token=None, ex_file=None, in_file=None, verbose=False, rows=200, only_cited=False):
+def get_papers(author, max_papers=None, token=None, ex_file=None, in_file=None, verbose=False, rows=200, only_cited=False, start_year=None):
     """
     Returns a list of all the papers from author that contain at least one citation.
     max_paper can reduce the number of papers. The default is MAX_papers (1000000)
@@ -193,6 +193,8 @@ def get_papers(author, max_papers=None, token=None, ex_file=None, in_file=None, 
              papers = [p for p in papers if p.citation_count > 0][0:max_papers]
         else:
             papers = [p for p in papers][0:max_papers]
+        if start_year is not None:
+            papers = [p for p in papers if int(p.year) >= start_year]
     except (TypeError, AttributeError):
         papers = None
         print(f'Got 0 papers from {author} with at least one citation')
@@ -321,12 +323,12 @@ def print_results(author, papers, citations, filename=None, verbose=False, only_
         f.close()
 
 def do_all(author, max_papers=None, no_screen=False, no_file=False,
-           token=None, ex_file=None, in_file=None, verbose=None, rows=200, only_cited=False):
+           token=None, ex_file=None, in_file=None, verbose=None, rows=200, only_cited=False, start_year=None):
     """
     Run the different part of the program to directly obtain the LaTex file
     """
     articulos = get_papers(author, max_papers=max_papers,
-                           token=token, ex_file=ex_file, in_file=in_file, verbose=verbose, rows=rows, only_cited=only_cited)
+                           token=token, ex_file=ex_file, in_file=in_file, verbose=verbose, rows=rows, only_cited=only_cited, start_year=start_year)
     if articulos is not None and len(articulos) != 0:
         citas = get_citations(articulos, token=token, verbose=verbose, rows=rows)
         if not no_screen:
@@ -367,12 +369,13 @@ def main():
     parser.add_argument("-ex", "--exclude_bibcodes", help="A filename containing the bibcodes to be excluded")
     parser.add_argument("-in", "--include_bibcodes", help="A filename containing the bibcodes to be included. In this case, the author may be omitted")
     parser.add_argument("-r", "--rows", help="Number of ADS results per page (default 200).", type=int, default=200)
+    parser.add_argument("-sy", "--start_year", help="Only papers published from this year onwards are considered.", type=int)
     args = parser.parse_args()
     if args.author == '' and args.include_bibcodes is None:
         raise ValueError('at least an author name or an include file must be given')
     do_all(args.author, max_papers=args.max_papers, no_screen=args.no_screen, no_file=args.no_file,
            token=args.token, ex_file=args.exclude_bibcodes, in_file=args.include_bibcodes, verbose=args.verbose,
-           rows=args.rows, only_cited=args.only_cited)
+           rows=args.rows, only_cited=args.only_cited, start_year=args.start_year)
 
 if __name__ == '__main__':            
     main()

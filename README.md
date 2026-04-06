@@ -31,14 +31,14 @@ donde se da el nombre del author (mejor poner en nombre y el apelido) que buscas
 
 Deberia resultar en un fichero LaTex de nombre en este caso "refs_MorissetChristophe.tex" , de lo cual se genera un PDF bonito. 
 
-Si tienes un nombre bastane comun pero que tienes ya una lista de los bibcodes que coresponden a tus articulos en un fichero por ejemplo nombrado in_refs.dat de este tipo (puede ser que los [] sean (), no importa):
+Si tienes un nombre bastane comun pero que tienes ya una lista de los bibcodes que coresponden a tus articulos en un fichero por ejemplo nombrado in_refs.dat de este tipo, no importa si hay [] o () :
 ```
-[2016A&A...585A..69G] 
+2016A&A...585A..69G 
 [2015EAS....71..313G]
-[2015arXiv151004548M] 
-[2015MNRAS.452.2606G] 
-[2015MNRAS.452.1764R] 
-[2015IAUGA..2255587P] 
+(2015arXiv151004548M)
+2015MNRAS.452.2606G 
+2015MNRAS.452.1764R 
+2015IAUGA..2255587P 
 ```
 
 puedes usar:
