@@ -20,6 +20,42 @@ except ImportError:
     except ImportError:
         _tomllib = None
 
+
+
+dic_pubs = {}
+# dic_pubs: (print_ISSN, electronic_ISSN)
+# None = not applicable or not found
+# Notes on special cases are in comments
+# --- Peer-reviewed journals ---
+
+dic_pubs["Astronomy and Astrophysics"] = ("0004-6361", "1432-0746")
+dic_pubs["The Astrophysical Journal Supplement Series"] = ("0067-0049", "1538-4365")
+dic_pubs["The Astrophysical Journal"] = ("0004-637X", "1538-4357")
+dic_pubs["Monthly Notices of the Royal Astronomical Society"] = ("0035-8711", "1365-2966")
+dic_pubs["Revista Mexicana de Astronomia y Astrofisica"] = ("0185-1101", "3061-8649")
+# Note: RMxAA recently acquired e-ISSN 3061-8649; some sources list only the print ISSN
+dic_pubs["Nature Astronomy"] = (None, "2397-3366")
+# Online-only journal launched 2017; no print edition
+dic_pubs["Astrophysics Source Code Library"] = (None, "2329-4216")
+# ASCL is a registry indexed by ADS; ISSN 2329-4216 assigned as an online record
+dic_pubs["IEEE Transactions on Vehicular Communications"] = ("1077-2626", "1941-0506")
+# ⚠️  This title does not exist. The ADS abbreviation ITVCG maps to
+# "IEEE Transactions on Visualization and Computer Graphics" (print 1077-2626, e 1941-0506).
+# The entry in your list is almost certainly this journal.
+dic_pubs["Atoms"] = (None, "2218-2004")
+# MDPI open-access online journal; no print edition
+dic_pubs["RAS Techniques and Instruments"] = (None, "2752-8200")
+# Online-only journal launched 2022
+dic_pubs["The Astronomical Journal"] = ("0004-6256", "1538-3881")
+dic_pubs["Acta Astronautica"] = ("0094-5765", "1879-2030")
+dic_pubs["Frontiers in Astronomy and Space Sciences"] = (None, "2296-987X")
+dic_pubs["Memorie della Societa Astronomica Italiana"] = ("0037-8720", "1824-016X")
+# --- Conference series with ISSNs ---
+dic_pubs["Revista Mexicana de Astronomia y Astrofisica Conference Series"] = ("1405-2059", None)
+# Only a print/single ISSN found; no separate e-ISSN registered
+dic_pubs["American Astronomical Society Meeting Abstracts"] = ("0002-7537", "1943-8141")
+
+
 def _read_version():
     if _tomllib is not None:
         import os
@@ -130,8 +166,8 @@ def pretty_ref(p, with_title=False):
             title = ''
     else:
         title = ''
-        
-    return f'{auts(p)}{year}{title}{pub}{volume}{page}'
+    
+    return f'{auts(p)}{year}{title}{pub}{volume}{page}', 
          
 def clean_arXiv(papers):
     """
@@ -267,6 +303,7 @@ def print_results(author, papers, citations, filename=None, verbose=False, only_
             myprint(f'\\item {pretty_ref(p, with_title=True)} \\\\')
             myprint(f'ADS link: https://ui.adsabs.harvard.edu/abs/{p.bibcode.replace("&", r"\&")}/abstract \\\\')
             myprint(f'DOI: {cv(p.doi) if hasattr(p, "doi") else "N/A"} \\\\')
+            myprint(f'ISSN: {dic_pubs.get(p.pub, ("N/A", "N/A"))[0]} (print), {dic_pubs.get(p.pub, ("N/A", "N/A"))[1]} (electronic) \\\\')
             for citing in citations[p.bibcode]:
                 autocite = False
                 autociteco = False
@@ -322,6 +359,18 @@ def print_results(author, papers, citations, filename=None, verbose=False, only_
     myprint('\\end{document}')
     if filename is not None and not isFile(filename):
         f.close()
+
+def get_pubs(papers):
+
+    pubs = []
+    for p in papers:
+        try:
+            pub = f'{cv(p.pub)}'
+        except (AttributeError, TypeError):
+            pub = ''
+        if pub not in pubs:
+            pubs.append(pub)
+    return pubs
 
 def do_all(author, max_papers=None, no_screen=False, no_file=False,
            token=None, ex_file=None, in_file=None, verbose=None, rows=200, only_cited=False, start_year=None):
