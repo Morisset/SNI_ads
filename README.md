@@ -35,24 +35,25 @@ Hay que recuperar una clave de este tipo: "5K123456789HCzvJWn7312345678987M"
 
 ### Usage
 
-SNIads [-h] [-t TOKEN] [-m MAX_PAPERS] [-ns] [-nf] [-oc] [-v] [-V] [-ex EXCLUDE_BIBCODES] [-in INCLUDE_BIBCODES] [-r ROWS] [-sy START_YEAR] author
+SNIads [-h] [-t TOKEN] [-m MAX_PAPERS] [-oc] [-sy START_YEAR] [-ns] [-nf] [-ex EXCLUDE_BIBCODES] [-in INCLUDE_BIBCODES] [-r ROWS] [-v] [-V] author
 
 positional arguments: 
 * author : Author to search for.
 
 options:
-*  -h, --help            : show this help message and exit
-*  -t TOKEN, --token TOKEN : ADS token. It can also be stored in ADS_DEV_KEY environment variable.
-*  -m MAX_PAPERS, --max_papers : MAX_PAPERS Maximum number of papers to consider.
-*  -ns, --no_screen      : No screen output.
-*  -nf, --no_file        : No file output.
-*  -oc, --only_cited     : Only cited papers are printed.
-*  -v, --verbose         : Verbose
-*  -V, --version         : Display version information and exit.
-*  -ex EXCLUDE_BIBCODES, --exclude_bibcodes EXCLUDE_BIBCODES : A filename containing the bibcodes to be excluded
-*  -in INCLUDE_BIBCODES, --include_bibcodes INCLUDE_BIBCODES : A filename containing the bibcodes to be included. In this case, the author may be omitted
-*  -r ROWS, --rows ROWS : Number of ADS results per page (default 200).
-*  -sy START_YEAR, --start_year START_YEAR : Only papers published from this year onwards are considered.
+*  -h, --help:           show this help message and exit
+*  -t TOKEN, --token TOKEN: ADS token. It can also be stored in ADS_DEV_KEY environment variable.
+*  -m MAX_PAPERS, --max_papers MAX_PAPERS: Maximum number of papers to consider.
+*  -oc, --only_cited:     Only cited papers are printed.
+*  -sy START_YEAR, --start_year START_YEAR: Only papers published from this year onwards are considered.
+*  -ns, --no_screen:      No screen output.
+*  -nf, --no_file:        No file output.
+*  -ex EXCLUDE_BIBCODES, --exclude_bibcodes EXCLUDE_BIBCODES:  A filename containing the bibcodes to be excluded
+*  -in INCLUDE_BIBCODES, --include_bibcodes INCLUDE_BIBCODES: A filename containing the bibcodes to be included. In this case, the author may be omitted
+*  -r ROWS, --rows ROWS:  Number of ADS results per page (default 200).
+*  -v, --verbose:         Verbose
+*  -V, --version:         Display version information and exit.
+
 
 ### Ejemplo
 
