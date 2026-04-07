@@ -202,7 +202,7 @@ def get_papers(author, max_papers=None, token=None, ex_file=None, in_file=None, 
             if verbose:
                 print(f'get_papers for bibcode = {bibcode}')
             res = ads.SearchQuery(bibcode=bibcode,
-                                  fl='author, title, year, pub, volume, page, citation, citation_count, bibcode',
+                                  fl='author, title, year, pub, volume, page, citation, citation_count, bibcode, doi',
                                   rows=rows,
                                   max_pages=MAX_pages,
                                   token=token)
@@ -212,7 +212,7 @@ def get_papers(author, max_papers=None, token=None, ex_file=None, in_file=None, 
                 print(f'Error querying ADS for bibcode {bibcode}: {e}')
     else:
         res = ads.SearchQuery(author=author,
-                              fl='author, title, year, pub, volume, page, citation, citation_count, bibcode',
+                              fl='author, title, year, pub, volume, page, citation, citation_count, bibcode, doi',
                               rows=rows,
                               max_pages=MAX_pages,
                               token=token)
