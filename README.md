@@ -1,10 +1,10 @@
 >[!WARNING]
->**<span style="color:red">Este programa genera un fichero que TIENES QUE VERIFICAR, porque puede ser que aun tiene errores, por ejemplo:</span>**
->* Hay varias maneras de codificar los acentos, que no son todas compatibles.
->* Puede aparecer dos veces el mismo articulo en la lista de citas: uno de ArXiv, otro de la revista "real". Hay que quitar el ArXiv...
->* Puede ser que autores se esconden bajo "et al." y que el sistema no clasifique bien.
+>**<span style="color:red">Este programa genera un archivo que DEBEN VERIFICAR, ya que puede contener errores. Por ejemplo:</span>**
+>* Existen diversas formas de codificar los acentos que no siempre son compatibles entre sí.
+>* Un mismo artículo puede aparecer duplicado en la lista de citas: una entrada de ArXiv y otra de la revista oficial. En ese caso, hay que eliminar la entrada de ArXiv.
+>* Es posible que algunos autores estén ocultos bajo et al. y que el sistema no los clasifique correctamente.
 >
->**<span style="color:red">¡NO GARANTIA AT ALL DE QUE EL RESULTADO SEA TOTALMENTE CORRECTO!</span>**
+>**<span style="color:red">¡NO SE OFRECE NINGUNA GARANTÍA DE QUE EL RESULTADO SEA TOTALMENTE CORRECTO!</span>**
 
 ### Installation
 
