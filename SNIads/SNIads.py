@@ -296,9 +296,10 @@ def print_results(author, papers, citations, filename=None, verbose=False, only_
         N_citations = p.citation_count
         authors = [pretty_author_name(a) for a in p.author]
         if N_citations > 0:
+            bibcode = p.bibcode.replace("&", r"\&")
             myprint(f'\\item {pretty_ref(p, with_title=True)} \\\\')
             myprint(f'ISSN: {dic_pubs.get(p.pub, ("N/A", "N/A"))[0]} (print), {dic_pubs.get(p.pub, ("N/A", "N/A"))[1]} (electronic) \\\\')
-            myprint(f'ADS link: https://ui.adsabs.harvard.edu/abs/{p.bibcode.replace("&", r"\&")}/abstract \\\\')
+            myprint(f'ADS link: https://ui.adsabs.harvard.edu/abs/{bibcode}/abstract \\\\')
             myprint(f'DOI: {cv(p.doi) if hasattr(p, "doi") else "N/A"} \\\\')
             for citing in citations[p.bibcode]:
                 autocite = False
@@ -344,9 +345,10 @@ def print_results(author, papers, citations, filename=None, verbose=False, only_
                         myprint(f'\\item {pretty_ref(pc)}')
                     myprint('\\end{itemize}')
         elif not only_cited:
+            bibcode = p.bibcode.replace("&", r"\&")
             myprint(f'\\item {pretty_ref(p, with_title=True)} \\\\')
             myprint(f'ISSN: {dic_pubs.get(p.pub, ("N/A", "N/A"))[0]} (print), {dic_pubs.get(p.pub, ("N/A", "N/A"))[1]} (electronic) \\\\')
-            myprint(f'ADS link: https://ui.adsabs.harvard.edu/abs/{p.bibcode.replace("&", r"\&")}/abstract \\\\')
+            myprint(f'ADS link: https://ui.adsabs.harvard.edu/abs/{bibcode}/abstract \\\\')
             myprint(f'DOI: {cv(p.doi) if hasattr(p, "doi") else "N/A"} \\\\')
             myprint('No citations \\\\')
         myprint('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%')
