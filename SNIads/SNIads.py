@@ -3,6 +3,7 @@
 Created on 14 dec. 2015
 
 @author: christophemorisset
+With contribution from Alfredo Diaz (IA-UNAM) 
 
 '''
 
@@ -157,13 +158,13 @@ def pretty_ref(p, with_title=False):
         page = ''
     if with_title:
         try:
-            title = f', {{\\it {cv(p.title[0])}}}'
+            title = fr', {{\\it {cv(p.title[0])}}}'
         except (AttributeError, TypeError, IndexError):
             title = ''
     else:
         title = ''
     
-    return f'{auts(p)}{year}{title}{pub}{volume}{page}', 
+    return f'{auts(p)}{year}{title}{pub}{volume}{page}' 
          
 def clean_arXiv(papers):
     """
@@ -209,7 +210,7 @@ def get_papers(author, max_papers=None, token=None, ex_file=None, in_file=None, 
             try:
                 papers.extend(list(res))
             except Exception as e:
-                print(f'Error querying ADS for bibcode {bibcode}: {e}')
+                print(f'Error querying ADS for bibcode {bibcode}: Ignoring paper. {e}')
     else:
         res = ads.SearchQuery(author=author,
                               fl='author, title, year, pub, volume, page, citation, citation_count, bibcode, doi',
@@ -219,7 +220,7 @@ def get_papers(author, max_papers=None, token=None, ex_file=None, in_file=None, 
         try:
             papers = list(res)
         except Exception as e:
-            print(f'Error querying ADS for author {author}: {e}')
+            print(f'Error querying ADS for author {author}. {e}')
             papers = None
     try:
         if only_cited:
@@ -259,10 +260,15 @@ def get_citations(papers, token=None, verbose=False, rows=200):
                                       token=token)
                 try:
                     citations[p.bibcode] = clean_arXiv(list(res))
+                    print(f'Got {N_citations} citations for paper {p.bibcode}.')
                 except Exception as e:
-                    print(f'Error fetching citations for {p.bibcode}: {e}')
+                    if "502" in str(e):
+                        print(fr'--- ADS saturada (502) en {p.bibcode}. Esperando 10s... ---')
+                        time.sleep(10)
+                    else:
+                        print(f'Error fetching citations for {p.bibcode}: {e}')
                     citations[p.bibcode] = []
-                print(f'Got {N_citations} citations for paper {p.bibcode}.')
+                
             else:
                 print(f'No citations for paper {p.bibcode}.')
     return citations
@@ -297,7 +303,7 @@ def print_results(author, papers, citations, filename=None, verbose=False, only_
         authors = [pretty_author_name(a) for a in p.author]
         if N_citations > 0:
             bibcode = p.bibcode.replace("&", r"\&")
-            myprint(f'\\item {pretty_ref(p, with_title=True)} \\\\')
+            myprint(fr'\item {pretty_ref(p, with_title=True)} \\')
             myprint(f'ISSN: {dic_pubs.get(p.pub, ("N/A", "N/A"))[0]} (print), {dic_pubs.get(p.pub, ("N/A", "N/A"))[1]} (electronic) \\\\')
             myprint(f'ADS link: https://ui.adsabs.harvard.edu/abs/{bibcode}/abstract \\\\')
             myprint(f'DOI: {cv(p.doi) if hasattr(p, "doi") else "N/A"} \\\\')
@@ -327,19 +333,19 @@ def print_results(author, papers, citations, filename=None, verbose=False, only_
             if this_count > 0:
                 myprint(f'Total = {this_count}, Type A = {len(typeA)}, type B = {len(typeB)}, type C = {len(typeC)} \\\\')
                 if len(typeA) > 0:
-                    myprint('{\\bf Citations Type A:}')
+                    myprint(r'{\bf Citations Type A:}')
                     myprint('\\begin{itemize}')
                     for pc in sorted(typeA , key=lambda pp: (pp.year, pp.author[0])):
                         myprint(f'\\item {pretty_ref(pc)}')
                     myprint('\\end{itemize}')
                 if len(typeB) > 0:
-                    myprint('{\\bf Citations Type B:}')
+                    myprint(r'{\bf Citations Type B:}')
                     myprint('\\begin{itemize}')
                     for pc in sorted(typeB , key=lambda pp: (pp.year, pp.author[0])):
                         myprint(f'\\item {pretty_ref(pc)}')
                     myprint('\\end{itemize}')
                 if len(typeC) > 0:
-                    myprint('{\\bf Citations Type C:}')
+                    myprint(r'{\bf Citations Type C:}')
                     myprint('\\begin{itemize}')
                     for pc in sorted(typeC , key=lambda pp: (pp.year, pp.author[0])):
                         myprint(f'\\item {pretty_ref(pc)}')
