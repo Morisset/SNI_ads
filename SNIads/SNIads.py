@@ -38,10 +38,6 @@ dic_pubs["Nature Astronomy"] = (None, "2397-3366")
 # Online-only journal launched 2017; no print edition
 dic_pubs["Astrophysics Source Code Library"] = (None, "2329-4216")
 # ASCL is a registry indexed by ADS; ISSN 2329-4216 assigned as an online record
-dic_pubs["IEEE Transactions on Vehicular Communications"] = ("1077-2626", "1941-0506")
-# ⚠️  This title does not exist. The ADS abbreviation ITVCG maps to
-# "IEEE Transactions on Visualization and Computer Graphics" (print 1077-2626, e 1941-0506).
-# The entry in your list is almost certainly this journal.
 dic_pubs["Atoms"] = (None, "2218-2004")
 # MDPI open-access online journal; no print edition
 dic_pubs["RAS Techniques and Instruments"] = (None, "2752-8200")
