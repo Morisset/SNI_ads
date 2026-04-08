@@ -295,6 +295,7 @@ def print_results(author, papers, citations, filename=None, verbose=False, only_
             f.write(str + '\n')
     
     myprint(r'\documentclass{letter}')
+    myprint(r'\usepackage[margin=1in]{geometry} % Sets all margins to 1 inch')
     myprint(r'\begin{document}')
     myprint(r'\begin{enumerate}')
     total_typeA = 0
