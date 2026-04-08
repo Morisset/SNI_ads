@@ -133,23 +133,27 @@ def auts(p):
         auts = ', '.join([pretty_author_name(a) for a in p.author])
     return auts
    
-def pretty_ref(p, with_title=False):
+def pretty_ref(p, with_title=False, eol=False):
     r"""
     Returns a string in the form
     authors, year, {\it title}, pub, volume, page
     by default, title is not included. Changed by with_title keyword.
     type(p) is ads.search.Article
     """
+    if eol:
+        eol_str = r'\\'
+    else:
+        eol_str = ''
     try:
-        year = f', {cv(p.year)}'
+        year = f', {eol_str}{cv(p.year)}'
     except (AttributeError, TypeError):
         year = ''
     try:
-        pub = f', {cv(p.pub)}'
+        pub = f', {eol_str}{cv(p.pub)}'
     except (AttributeError, TypeError):
         pub = ''
     try:
-        volume = f', {cv(p.volume)}'
+        volume = f', {eol_str}{cv(p.volume)}'
     except (AttributeError, TypeError):
         volume = ''
     try:
@@ -158,7 +162,7 @@ def pretty_ref(p, with_title=False):
         page = ''
     if with_title:
         try:
-            title = fr', {{\\it {cv(p.title[0])}}}'
+            title = fr', {eol_str}{{\it {cv(p.title[0])}}}'
         except (AttributeError, TypeError, IndexError):
             title = ''
     else:
@@ -263,7 +267,7 @@ def get_citations(papers, token=None, verbose=False, rows=200):
                     print(f'Got {N_citations} citations for paper {p.bibcode}.')
                 except Exception as e:
                     if "502" in str(e):
-                        print(fr'--- ADS saturada (502) en {p.bibcode}. Esperando 10s... ---')
+                        print(f'--- ADS saturada (502) en {p.bibcode}. Esperando 10s... ---')
                         time.sleep(10)
                     else:
                         print(f'Error fetching citations for {p.bibcode}: {e}')
@@ -273,25 +277,26 @@ def get_citations(papers, token=None, verbose=False, rows=200):
                 print(f'No citations for paper {p.bibcode}.')
     return citations
 
-def print_results(author, papers, citations, filename=None, verbose=False, only_cited=True):
+def print_results(author, papers, citations, filename=None, verbose=False, only_cited=True, no_screen=False, no_file=False):
     """
-    Print the results on the screen and in a file.
+    Print the results on the screen and/or in a file.
     """
-    if filename is None:
-        def myprint(str):
+    f = None
+    if not no_file and filename is not None:
+        if isFile(filename):
+            f = filename
+        else:
+            f = open(filename, 'w')
+
+    def myprint(str):
+        if not no_screen:
             print(str)
-    elif isFile(filename):
-        f = filename
-        def myprint(str):        
-            f.write(str + '\n')
-    else:
-        f = open(filename, 'w')
-        def myprint(str):        
+        if f is not None:
             f.write(str + '\n')
     
-    myprint('\\documentclass{letter}')
-    myprint('\\begin{document}')
-    myprint('\\begin{enumerate}')
+    myprint(r'\documentclass{letter}')
+    myprint(r'\begin{document}')
+    myprint(r'\begin{enumerate}')
     total_typeA = 0
     total_typeB = 0
     total_typeC = 0
@@ -303,10 +308,10 @@ def print_results(author, papers, citations, filename=None, verbose=False, only_
         authors = [pretty_author_name(a) for a in p.author]
         if N_citations > 0:
             bibcode = p.bibcode.replace("&", r"\&")
-            myprint(fr'\item {pretty_ref(p, with_title=True)} \\')
-            myprint(f'ISSN: {dic_pubs.get(p.pub, ("N/A", "N/A"))[0]} (print), {dic_pubs.get(p.pub, ("N/A", "N/A"))[1]} (electronic) \\\\')
-            myprint(f'ADS link: https://ui.adsabs.harvard.edu/abs/{bibcode}/abstract \\\\')
-            myprint(f'DOI: {cv(p.doi) if hasattr(p, "doi") else "N/A"} \\\\')
+            myprint(fr'\item {pretty_ref(p, with_title=True, eol=True)} \\')
+            myprint(fr'ISSN: {dic_pubs.get(p.pub, ("N/A", "N/A"))[0]} (print), {dic_pubs.get(p.pub, ("N/A", "N/A"))[1]} (electronic) \\')
+            myprint(fr'ADS link: https://ui.adsabs.harvard.edu/abs/{bibcode}/abstract \\')
+            myprint(fr'DOI: {cv(p.doi) if hasattr(p, "doi") else "N/A"} \\')
             for citing in citations[p.bibcode]:
                 autocite = False
                 autociteco = False
@@ -331,7 +336,7 @@ def print_results(author, papers, citations, filename=None, verbose=False, only_
             total_typeC += len(typeC)
             this_count = len(typeA) + len(typeB) + len(typeC)
             if this_count > 0:
-                myprint(f'Total = {this_count}, Type A = {len(typeA)}, type B = {len(typeB)}, type C = {len(typeC)} \\\\')
+                myprint(fr'Total = {this_count}, Type A = {len(typeA)}, type B = {len(typeB)}, type C = {len(typeC)} \\')
                 if len(typeA) > 0:
                     myprint(r'{\bf Citations Type A:}')
                     myprint('\\begin{itemize}')
@@ -352,11 +357,11 @@ def print_results(author, papers, citations, filename=None, verbose=False, only_
                     myprint('\\end{itemize}')
         elif not only_cited:
             bibcode = p.bibcode.replace("&", r"\&")
-            myprint(f'\\item {pretty_ref(p, with_title=True)} \\\\')
-            myprint(f'ISSN: {dic_pubs.get(p.pub, ("N/A", "N/A"))[0]} (print), {dic_pubs.get(p.pub, ("N/A", "N/A"))[1]} (electronic) \\\\')
-            myprint(f'ADS link: https://ui.adsabs.harvard.edu/abs/{bibcode}/abstract \\\\')
-            myprint(f'DOI: {cv(p.doi) if hasattr(p, "doi") else "N/A"} \\\\')
-            myprint('No citations \\\\')
+            myprint(fr'\item {pretty_ref(p, with_title=True, eol=True)} \\')
+            myprint(fr'ISSN: {dic_pubs.get(p.pub, ("N/A", "N/A"))[0]} (print), {dic_pubs.get(p.pub, ("N/A", "N/A"))[1]} (electronic) \\')
+            myprint(fr'ADS link: https://ui.adsabs.harvard.edu/abs/{bibcode}/abstract \\')
+            myprint(fr'DOI: {cv(p.doi) if hasattr(p, "doi") else "N/A"} \\')
+            myprint(r'No citations \\')
         myprint('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%')
     myprint('\\end{enumerate}')
     totall = total_typeA + total_typeB + total_typeC
@@ -386,12 +391,12 @@ def do_all(author, max_papers=None, no_screen=False, no_file=False,
                            token=token, ex_file=ex_file, in_file=in_file, verbose=verbose, rows=rows, only_cited=only_cited, start_year=start_year)
     if articulos is not None and len(articulos) != 0:
         citas = get_citations(articulos, token=token, verbose=verbose, rows=rows)
-        if not no_screen:
-            print_results(author, articulos, citas, verbose=verbose, only_cited=only_cited)
+        filename = f'refs_{clean_author(author)}.tex'
         if not no_file:
-            filename = f'refs_{clean_author(author)}.tex'
             print(f'Writing the LaTex file {filename}')
-            print_results(author, articulos, citas, filename=filename, verbose=verbose, only_cited=only_cited)
+        print_results(author, articulos, citas, filename=filename, verbose=verbose, only_cited=only_cited,
+                      no_screen=no_screen, no_file=no_file)
+        if not no_file:
             print('Done')
     else:
         print('No papers found, something went wrong. Check ADS token and Internet connection.')
