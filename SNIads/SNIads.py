@@ -207,7 +207,7 @@ def get_papers(author, max_papers=None, token=None, ex_file=None, in_file=None, 
             if verbose:
                 print(f'get_papers for bibcode = {bibcode}')
             res = ads.SearchQuery(bibcode=bibcode,
-                                  fl='author, title, year, pub, volume, page, citation, citation_count, bibcode, doi',
+                                  fl='author, title, year, pub, volume, page, citation, citation_count, bibcode, doi, orcid_user, orcid_other, orcid_pub',
                                   rows=rows,
                                   max_pages=MAX_pages,
                                   token=token)
@@ -217,7 +217,7 @@ def get_papers(author, max_papers=None, token=None, ex_file=None, in_file=None, 
                 print(f'Error querying ADS for bibcode {bibcode}: Ignoring paper. {e}')
     else:
         res = ads.SearchQuery(author=author,
-                              fl='author, title, year, pub, volume, page, citation, citation_count, bibcode, doi',
+                              fl='author, title, year, pub, volume, page, citation, citation_count, bibcode, doi, orcid_user, orcid_other, orcid_pub',
                               rows=rows,
                               max_pages=MAX_pages,
                               token=token)
@@ -383,14 +383,48 @@ def get_pubs(papers):
             pubs.append(pub)
     return pubs
 
+def print_orcids(papers):
+    for p in papers:
+        print(f'{p.bibcode} -- {cv(p.doi) if hasattr(p, "doi") else "N/A"} -- {p.title[0]}')
+        orcids = []
+        try:
+            o_u = p.orcid_user if hasattr(p, 'orcid_user') and p.orcid_user is not None else ['-'] * len(p.author)
+            o_o = p.orcid_other if hasattr(p, 'orcid_other') and p.orcid_other is not None else ['-'] * len(p.author)
+            o_p = p.orcid_pub if hasattr(p, 'orcid_pub') and p.orcid_pub is not None else ['-'] * len(p.author)
+            for oo1, oo2, oo3 in zip(o_u, o_o, o_p):
+                if oo1 != '-':
+                    orcid = oo1
+                elif oo2 != '-':
+                    orcid = oo2
+                elif oo3 != '-':
+                    orcid = oo3
+                else:                    
+                    orcid = '-'
+                if orcid == '-':
+                    orcid = '0'
+                orcids.append(orcid)
+            i = 1
+            for a, o in zip(p.author, orcids):
+                nombre = a.split(',')[0]
+                apellido = a.split(',')[1].strip()
+                print(f'  {i}  -- {apellido} -- {nombre} -- {o}')
+                i += 1
+        except (AttributeError, TypeError):
+            print('  No ORCID information available')
+    
+
 def do_all(author, max_papers=None, no_screen=False, no_file=False,
-           token=None, ex_file=None, in_file=None, verbose=None, rows=200, only_cited=False, start_year=None):
+           token=None, ex_file=None, in_file=None, verbose=None, rows=200, 
+           only_cited=False, start_year=None, only_orcids=False):
     """
     Run the different part of the program to directly obtain the LaTex file
     """
     articulos = get_papers(author, max_papers=max_papers,
                            token=token, ex_file=ex_file, in_file=in_file, verbose=verbose, rows=rows, only_cited=only_cited, start_year=start_year)
     if articulos is not None and len(articulos) != 0:
+        if only_orcids:
+            print_orcids(articulos)
+            return
         citas = get_citations(articulos, token=token, verbose=verbose, rows=rows)
         filename = f'refs_{clean_author(author)}.tex'
         if not no_file:
@@ -425,6 +459,7 @@ def main():
     parser.add_argument("-sy", "--start_year", help="Only papers published from this year onwards are considered.", type=int)
     parser.add_argument("-ns", "--no_screen", help="No screen output.", action="store_true")
     parser.add_argument("-nf", "--no_file", help="No file output.", action="store_true")
+    parser.add_argument("-oo", "--only_orcids", help="Only print ORCIDs.", action="store_true")
     parser.add_argument("-ex", "--exclude_bibcodes", help="A filename containing the bibcodes to be excluded")
     parser.add_argument("-in", "--include_bibcodes", help="A filename containing the bibcodes to be included. In this case, the author may be omitted")
     parser.add_argument("-r", "--rows", help="Number of ADS results per page (default 200).", type=int, default=200)
@@ -435,7 +470,7 @@ def main():
         raise ValueError('at least an author name or an include file must be given')
     do_all(args.author, max_papers=args.max_papers, no_screen=args.no_screen, no_file=args.no_file,
            token=args.token, ex_file=args.exclude_bibcodes, in_file=args.include_bibcodes, verbose=args.verbose,
-           rows=args.rows, only_cited=args.only_cited, start_year=args.start_year)
+           rows=args.rows, only_cited=args.only_cited, start_year=args.start_year, only_orcids=args.only_orcids)
 
 if __name__ == '__main__':            
     main()
