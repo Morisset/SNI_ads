@@ -384,31 +384,27 @@ def get_pubs(papers):
     return pubs
 
 def print_orcids(papers):
+    def get_orcid_list(p, attr):
+        return getattr(p, attr, None) if hasattr(p, attr) and getattr(p, attr) is not None else ['-'] * len(p.author)
+    
     for p in papers:
         print(f'{p.bibcode} -- {cv(p.doi) if hasattr(p, "doi") else "N/A"} -- {p.title[0]}')
-        orcids = []
         try:
-            o_u = p.orcid_user if hasattr(p, 'orcid_user') and p.orcid_user is not None else ['-'] * len(p.author)
-            o_o = p.orcid_other if hasattr(p, 'orcid_other') and p.orcid_other is not None else ['-'] * len(p.author)
-            o_p = p.orcid_pub if hasattr(p, 'orcid_pub') and p.orcid_pub is not None else ['-'] * len(p.author)
-            for oo1, oo2, oo3 in zip(o_u, o_o, o_p):
-                if oo1 != '-':
-                    orcid = oo1
-                elif oo2 != '-':
-                    orcid = oo2
-                elif oo3 != '-':
-                    orcid = oo3
-                else:                    
-                    orcid = '-'
-                if orcid == '-':
-                    orcid = '0'
+            o_user = get_orcid_list(p, 'orcid_user')
+            o_other = get_orcid_list(p, 'orcid_other')
+            o_pub = get_orcid_list(p, 'orcid_pub')
+            
+            orcids = []
+            for user, other, pub in zip(o_user, o_other, o_pub):
+                # Select first available ORCID in priority order, default to '0' if none found
+                orcid = next((o for o in [user, other, pub] if o != '-'), '0')
                 orcids.append(orcid)
-            i = 1
-            for a, o in zip(p.author, orcids):
-                nombre = a.split(',')[0]
-                apellido = a.split(',')[1].strip()
-                print(f'  {i}  -- {apellido} -- {nombre} -- {o}')
-                i += 1
+            
+            for i, (author, orcid) in enumerate(zip(p.author, orcids), start=1):
+                parts = author.split(',', 1)
+                nombre = parts[0]
+                apellido = parts[1].strip() if len(parts) > 1 else ''
+                print(f'  {i}  -- {apellido} -- {nombre} -- {orcid}')
         except (AttributeError, TypeError):
             print('  No ORCID information available')
     

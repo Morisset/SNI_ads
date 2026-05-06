@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "SNIads"
-version = "8.15"
+version = "8.16"
 description = "A one-line command to manage citations for SNI"
 authors = [{name = "Christophe Morisset", email = "chris.morisset@gmail.com"}]
 license = {text = "LGPL"}
