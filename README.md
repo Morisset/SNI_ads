@@ -34,7 +34,7 @@ Hay que recuperar una clave de este tipo: "5K123456789HCzvJWn7312345678987M"
 
 ### Usage
 
-SNIads [-h] [-t TOKEN] [-m MAX_PAPERS] [-oc] [-sy START_YEAR] [-ns] [-nf] [-ex EXCLUDE_BIBCODES] [-in INCLUDE_BIBCODES] [-r ROWS] [-v] [-V] author
+SNIads [-h] [-t TOKEN] [-m MAX_PAPERS] [-oc] [-oo] [-sy START_YEAR] [-ns] [-nf] [-ex EXCLUDE_BIBCODES] [-in INCLUDE_BIBCODES] [-r ROWS] [-v] [-V] author
 
 positional arguments: 
 * author : Author to search for.
@@ -47,6 +47,7 @@ options:
 *  -sy START_YEAR, --start_year START_YEAR: Only papers published from this year onwards are considered.
 *  -ns, --no_screen:      No screen output.
 *  -nf, --no_file:        No file output.
+*  -oo, --only_orcids    Only print ORCIDs.
 *  -ex EXCLUDE_BIBCODES, --exclude_bibcodes EXCLUDE_BIBCODES:  A filename containing the bibcodes to be excluded
 *  -in INCLUDE_BIBCODES, --include_bibcodes INCLUDE_BIBCODES: A filename containing the bibcodes to be included. In this case, the author may be omitted
 *  -r ROWS, --rows ROWS:  Number of ADS results per page (default 200).
@@ -81,6 +82,12 @@ puedes usar:
 Si se debe mencionar un autor, para que se puede separar las citas de tipo B y C. Cuidado, este metodo implica una busqueda a ADS para cada articulo, puede ser pesado (limitaciones: 5,000 busquedas/dia).
 
 Una lista de bibcodes se puede generar de manera facil desde ADS (Export/Other Formats/Custom Format) usando el formato %R.
+
+Se puede usar la opción -oo (o --only_orcids) in which case the output will be a list of papers (a defined above) and for each paper the list of co-autores, con su rango, nombre, apellido y ORCID. En este caso no se produce fichero LaTex.
+
+Ejemplo:
+
+`SNIads -oo -m 10 "Morisset, c"`
 
 ### From a python script
 
